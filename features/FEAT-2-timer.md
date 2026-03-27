@@ -1,7 +1,7 @@
 # FEAT-2: Timer
 
 ## Status
-Aktueller Schritt: Spec
+Aktueller Schritt: IA/UX
 
 ## Abhängigkeiten
 - Benötigt: FEAT-1 (Session Management) – Timer läuft innerhalb einer Session
@@ -82,3 +82,123 @@ pausieren, fortsetzen oder zurücksetzen.
 - Sequenz-Timer (mehrere Timeboxen hintereinander)
 - Eigene Sound-Auswahl durch den Moderator
 - Timer-Verlauf oder Historie
+
+---
+
+## 2. IA/UX Entscheidungen
+*Ausgefüllt von: /ia-ux — 2026-03-27*
+
+### Einbettung im Produkt
+Zwei eigenständige Screens auf derselben Route – Moderatoren-Ansicht und Teilnehmer-Ansicht
+werden anhand des `?mod=<token>`-Parameters unterschieden.
+Route: `/session/:id` (Teilnehmer) und `/session/:id?mod=<token>` (Moderator)
+
+### Einstiegspunkte
+- Moderator: Redirect nach Session-Erstellung von `/`
+- Moderator: Direktaufruf der gebookmarkten Moderatoren-URL
+- Teilnehmer: Klick auf geteilten Link im Meeting-Chat
+- Teilnehmer: Redirect nach Nummer-Eingabe auf `/`
+
+### User Flow
+
+```
+Moderatoren-Ansicht
+    ↓ [Klick auf Preset-Button, z.B. "10 Min"]
+Timer zeigt 10:00, läuft noch nicht
+    ↓ [Klick: Start]
+Countdown läuft – alle Teilnehmer synchronisiert
+    ↓ [bei 2:00 = 20% von 10 Min]
+Visueller Zustandswechsel: warning (Hintergrund + Textfarbe)
+    ↓ [bei 00:00]
+Visueller Zustandswechsel: expired – Sound für alle Clients
+    ↓ [Klick: Reset]
+Timer zeigt wieder 10:00, wartet auf Start
+
+---
+
+Moderator: Pause-Flow
+Timer läuft
+    ↓ [Klick: Pause]
+Countdown stoppt, "Resume"-Button erscheint
+    ↓ [Klick: Resume]
+Countdown läuft weiter ab dem Pausier-Zeitpunkt
+
+---
+
+Teilnehmer-Ansicht
+    ↓ [Seite geladen, Timer läuft bereits]
+Sofort aktueller Stand sichtbar (kein Warten)
+    ↓
+Nur Timer-Anzeige, keine Interaktion möglich
+
+---
+
+Verbindungsstatus
+    ↓ [Netzwerkunterbrechung]
+Diskreter Verbindungsindikator sichtbar (nicht störend)
+    ↓ [Reconnect]
+Indikator verschwindet, State wird synchronisiert
+```
+
+### Interaktionsmuster
+- **Primärmuster (Moderator):** Dashboard mit direkten Aktions-Buttons (kein Wizard,
+  kein Formular-Submit – jede Aktion wirkt sofort)
+- **Primärmuster (Teilnehmer):** Reine Informationsanzeige ohne Interaktion
+- **Fehler-Handling:** Ungültige Custom-Zeit → Inline-Fehler unter dem Eingabefeld,
+  kein Blockieren anderer Aktionen
+- **Leerer Zustand:** Timer startet immer mit 00:00 und wartet auf Preset-Auswahl.
+  Preset-Buttons sind der primäre Einstieg.
+- **Ladeverhalten:** Kein Spinner – Timer-State wird instant nach WebSocket-Connect angezeigt.
+  Bei langsamem Connect: dezenter Verbindungsindikator.
+- **Share-Bereich:** Standardmäßig collapsed; beim ersten Öffnen der Session (direkt nach
+  Erstellung) einmalig aufgeklappt, danach collapsed bis manuell geöffnet.
+
+### Konzeptionelle Komponentenstruktur
+
+**Moderatoren-Ansicht:**
+```
+ModeratorView
+├── TimerDisplay [Zustandsabhängig: running / warning / expired]
+│   ├── CountdownLabel (MM:SS, tabular numbers, groß)
+│   └── ConnectionIndicator (dezent, nur bei Verbindungsproblem)
+├── ControlSection
+│   ├── PresetButtons (2 | 5 | 10 | 15 | 30 Min)
+│   ├── CustomTimeInput (Minuten-Feld + Sekunden-Feld + Fehlermeldung)
+│   └── ActionButtons
+│       ├── StartButton (sichtbar wenn Timer gestoppt/pausiert)
+│       ├── PauseButton (sichtbar wenn Timer läuft)
+│       └── ResetButton (immer sichtbar wenn Dauer gewählt)
+└── ShareSection (collapsed by default)
+    ├── ToggleTrigger "Session teilen"
+    ├── SessionNumberDisplay (4-stellig, groß, lesbar)
+    ├── CopyButton: Teilnehmer-URL + Bestätigung "Kopiert!"
+    └── CopyButton: Moderatoren-URL + Bestätigung "Kopiert!"
+```
+
+**Teilnehmer-Ansicht:**
+```
+ParticipantView
+├── TimerDisplay [Zustandsabhängig: running / warning / expired]
+│   ├── CountdownLabel (MM:SS, tabular numbers, groß)
+│   └── ConnectionIndicator (dezent, nur bei Verbindungsproblem)
+└── SessionBadge (Session-Nummer, klein, dezent)
+```
+
+### Barrierefreiheit (A11y)
+- Keyboard-Navigation (Moderator): Tab durch Presets → Custom-Input → Start/Pause/Reset →
+  Share-Toggle; Enter/Space aktiviert Buttons
+- Screen Reader: Timer-Anzeige als `aria-live="polite"` (sekündliche Updates);
+  bei expired-Zustand `aria-live="assertive"` für sofortige Ankündigung
+- Farbkontrast: Alle drei Timer-Zustände (running/warning/expired) erfüllen ≥4.5:1
+  mit den definierten Farb-Tokens aus dem PRD
+- Sound ist kein alleiniger Alert: visueller expired-Zustand immer vorhanden
+  (Sound-only wäre WCAG-Verstoß)
+- Tabular numbers: CountdownLabel verwendet `font-variant-numeric: tabular-nums`
+  (kein Layout-Shift durch wechselnde Ziffernbreiten)
+
+### Mobile-Verhalten
+- TimerDisplay füllt den verfügbaren Viewport-Bereich (groß und lesbar auch aus Distanz)
+- Alle Buttons ≥44px Höhe (Touch-Target)
+- PresetButtons: horizontal scrollbar auf sehr kleinen Screens (375px) oder 2-Zeilen-Wrap
+- CustomTimeInput: `inputmode="numeric"` für Ziffern-Keyboard
+- ShareSection bleibt ausklappbar auch auf Mobile; Teilnehmer-URL und Token gut kopierbar

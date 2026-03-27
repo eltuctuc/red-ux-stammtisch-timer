@@ -1,7 +1,7 @@
 # FEAT-1: Session Management
 
 ## Status
-Aktueller Schritt: Spec
+Aktueller Schritt: IA/UX
 
 ## Abhängigkeiten
 - Benötigt: Keine
@@ -88,3 +88,88 @@ ohne neuen Timer-Start.
 - Moderator-Passwort oder weitere Authentifizierungsebenen
 - Liste eigener vergangener Sessions
 - Session-Verlängerung oder manuelles Beenden
+
+---
+
+## 2. IA/UX Entscheidungen
+*Ausgefüllt von: /ia-ux — 2026-03-27*
+
+### Einbettung im Produkt
+Landing Page: eigener Screen, kein Navigation-Menü nötig.
+Route: `/`
+
+### Einstiegspunkte
+- Direktaufruf der App-URL (Bookmark des Moderators)
+- Direktaufruf der Moderatoren-URL → überspringt Landing Page, öffnet Moderatoren-Ansicht
+- Direktaufruf der Teilnehmer-URL → überspringt Landing Page, öffnet Teilnehmer-Ansicht
+
+### User Flow
+
+```
+Landing Page (/)
+    ↓ [Klick: "Neue Session starten"]
+Session wird erstellt (Server)
+    ↓
+Redirect → /session/:id?mod=<token>  (Moderatoren-Ansicht)
+    ↓
+Moderator sieht Share-Bereich (ausgeklappt bei erstem Laden der Session)
+Kopiert Teilnehmer-URL in Meeting-Chat
+
+---
+
+Landing Page (/)
+    ↓ [Eingabe: 4-stellige Nummer → Teilnehmer-Flow]
+Validierung (Nummer existiert und ist aktiv?)
+    ↓ (gültig)
+Redirect → /session/:id  (Teilnehmer-Ansicht)
+    ↓ (ungültig)
+Inline-Fehler unter dem Eingabefeld: "Session nicht gefunden"
+Eingabefeld bleibt aktiv
+
+---
+
+Landing Page (/)
+    ↓ [Eingabe: Moderatoren-Token oder vollständige Moderatoren-URL → Reconnect-Flow]
+Validierung (Token gültig und Session aktiv?)
+    ↓ (gültig)
+Redirect → /session/:id?mod=<token>  (Moderatoren-Ansicht)
+    ↓ (ungültig/abgelaufen)
+Inline-Fehler: "Session nicht gefunden oder abgelaufen"
+```
+
+### Interaktionsmuster
+- **Primärmuster:** Single-Screen mit primärem CTA + smart Input (kein Formular-Submit-Pattern)
+- **Smart Input:** Erkennt automatisch den Typ der Eingabe:
+  - 4 Ziffern → Teilnehmer-Flow
+  - Token-String oder vollständige URL → Moderator-Reconnect-Flow
+- **Fehler-Handling:** Inline unterhalb des Eingabefelds, kein Alert, kein Page-Reload
+- **Leerer Zustand:** Haupt-URL ist immer der leere Zustand – kein Empty-State nötig
+- **Ladeverhalten:** "Neue Session starten"-Button zeigt Loading-State während Server-Request,
+  danach sofortiger Redirect (kein Spinner-Overlay)
+
+### Konzeptionelle Komponentenstruktur
+```
+LandingPage
+├── AppBranding (Logo/Name, minimal)
+├── PrimaryAction
+│   └── Button "Neue Session starten" (primär, groß, volle Breite)
+├── SmartInputArea
+│   ├── Label "Session-Nummer oder Moderatoren-Token"
+│   ├── InputField (Typ: text, Placeholder: "z.B. 4821")
+│   ├── Button "Weiter" (sekundär)
+│   └── ErrorMessage (inline, unter dem Feld, nur bei Fehler)
+└── AppFooter (minimal, optional)
+```
+
+### Barrierefreiheit (A11y)
+- Keyboard-Navigation: Tab-Reihenfolge: Button "Neue Session" → Input → Button "Weiter"
+- Screen Reader: Button-Label "Neue Session starten", Input-Label sichtbar (kein Placeholder-only)
+- Farbkontrast: Alle Text-Elemente ≥4.5:1 (Flat Design, Inter)
+- Fehlermeldungen: `role="alert"` damit Screen Reader die Meldung sofort vorliest
+- Loading-State: `aria-busy="true"` auf dem Button während des Server-Requests
+
+### Mobile-Verhalten
+- Layout: Single Column, kein horizontales Scrollen
+- Touch-Targets: Button und Input-Feld ≥44px Höhe
+- Keyboard erscheint automatisch mit `inputmode="numeric"` für die 4-stellige Nummer
+  (wechselt zu `inputmode="text"` wenn mehr als 4 Zeichen erkannt werden)
