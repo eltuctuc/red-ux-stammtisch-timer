@@ -1,7 +1,7 @@
 # FEAT-1: Session Management
 
 ## Status
-Aktueller Schritt: IA/UX
+Aktueller Schritt: Tech
 
 ## Abhängigkeiten
 - Benötigt: Keine
@@ -173,3 +173,112 @@ LandingPage
 - Touch-Targets: Button und Input-Feld ≥44px Höhe
 - Keyboard erscheint automatisch mit `inputmode="numeric"` für die 4-stellige Nummer
   (wechselt zu `inputmode="text"` wenn mehr als 4 Zeichen erkannt werden)
+
+---
+
+## 3. Technisches Design
+*Ausgefüllt von: /solution-architect — 2026-03-27*
+
+### Component-Struktur
+
+```
+App (Router-Root)
+├── Route "/"       → LandingPage
+└── Route "/session/:id" → SessionPage
+
+LandingPage
+├── AppBranding
+├── NewSessionButton        – löst Session-Erstellung aus
+└── SmartInput              – Input + Weiter-Button + ErrorMessage
+
+SessionPage                 – liest URL-Param "?mod=<token>", entscheidet View
+├── ModeratorView           – wenn gültiges mod-Token in URL
+└── ParticipantView         – sonst
+```
+
+Wiederverwendbar aus bestehenden Komponenten: keine (Scaffold leer)
+
+### Daten-Model
+
+**Im PartyKit Durable Object (Server-seitig, pro Session):**
+- `modToken` – String, beim ersten Moderator-Connect gesetzt, danach unveränderlich
+- `timerState` – aktueller Timer-Zustand (Status, Dauer, Startzeit, Restzeit) – Details in FEAT-2
+- `lastActivityAt` – Timestamp des letzten Timer-Starts (Basis für 3h-Alarm)
+
+**Im Browser (Client-seitig, nicht persistent):**
+- `sessionId` – 4-stellige Zahl, aus URL-Param
+- `modToken` – aus URL-Param `?mod=`, nur in der Moderatoren-Ansicht vorhanden
+- `connectionStatus` – 'connecting' | 'connected' | 'disconnected' (React State)
+
+Gespeichert in: PartyKit Durable Object (kein localStorage, keine Datenbank)
+
+### API / Daten-Fluss
+
+Kein REST-Backend. Alle Kommunikation über WebSocket (PartyKit).
+
+**Session-Erstellung (FEAT-1-spezifisch):**
+1. Frontend generiert `sessionId` (zufällige 4-stellige Zahl) + `modToken` (UUID)
+2. Frontend versucht WebSocket-Connect zu PartyKit-Room `sessionId`
+3. PartyKit-Server: Room existiert noch nicht → neuer Room, `modToken` aus Connect-Params speichern
+4. Server bestätigt Session-Start mit initialem `STATE_UPDATE`
+5. Frontend navigiert zu `/session/:id?mod=<token>`
+
+**Session-Validierung (Teilnehmer-Join / Moderator-Reconnect):**
+- Teilnehmer: Connect zu Room `sessionId` ohne Token → Server prüft ob Room existiert
+- Moderator-Reconnect: Connect mit `?mod=<token>` → Server prüft Token gegen gespeicherten Wert
+- Fehlerfall: Server sendet `{ type: "ERROR", code: "SESSION_NOT_FOUND" }` → Frontend zeigt Inline-Fehler
+
+**WebSocket Message Types (Session-relevante):**
+- Server → Client: `STATE_UPDATE` – kompletter aktueller Zustand (bei Connect + bei Änderung)
+- Server → Client: `ERROR` mit Code – Session nicht gefunden, Token ungültig
+- Moderator → Server: alle Timer-Kommandos (in FEAT-2 beschrieben)
+
+**3h Session-Expiry:**
+- Bei jedem Timer-Start: PartyKit Alarm auf `jetzt + 3 Stunden` gesetzt
+- Alarm-Handler: Room verwirft State, sendet `SESSION_EXPIRED` an alle Clients, schließt Connections
+
+### Tech-Entscheidungen
+
+- **React Router v6:** Client-seitiges Routing für `/` und `/session/:id`; kein Server-seitiges
+  Routing nötig (Vite SPA)
+- **Session-ID-Generierung im Frontend:** Vermeidet Round-Trip zum Server; Kollision wird
+  beim Connect erkannt (Server antwortet mit `ROOM_EXISTS`, Frontend generiert neue ID)
+- **UUID als modToken:** Ausreichend unvorhersehbar für Security-by-Obscurity (128-bit Entropie);
+  kein JWT nötig da kein Auth-Backend vorhanden
+
+### Security-Anforderungen
+
+- **Authentifizierung:** Keine – öffentlich zugänglich by design
+- **Autorisierung:** Moderator = wer den `modToken` kennt (URL-Parameter); Server prüft
+  bei jeder Moderator-Aktion den Token gegen den gespeicherten Wert
+- **Input-Validierung:**
+  - Session-Nummer: Client validiert auf 4 Ziffern vor Connect-Versuch
+  - ModToken: Server prüft exakten String-Match; keine Teilübereinstimmungen
+- **OWASP-relevante Punkte:**
+  - XSS: React escaped alle Outputs automatisch; keine innerHTML-Nutzung
+  - Token-Brute-Force: UUID (128-bit) macht Enumeration praktisch unmöglich
+  - Session-Fixation: nicht anwendbar (kein Login-Flow)
+  - Kein CSRF: kein Cookie-basierter Auth
+
+### Dependencies
+
+- `react-router-dom` v6 – Client-seitiges Routing (SPA)
+
+### Test-Setup
+
+- **Unit Tests (Vitest):**
+  - Session-ID-Generierung liefert immer 4-stellige Zahl
+  - Smart-Input-Logik: 4 Ziffern → Teilnehmer-Flow, UUID-String → Moderator-Flow
+  - LandingPage: Fehlerstate wird bei `SESSION_NOT_FOUND` korrekt angezeigt
+
+- **Integration Tests:**
+  - PartyKit-Server: neuer Room nimmt ersten modToken an, lehnt falschen Token ab
+  - PartyKit-Server: Room-Connect ohne Token wird als Teilnehmer behandelt
+  - PartyKit-Server: Session-Expiry-Alarm schließt Room korrekt
+
+- **E2E Tests (Playwright):**
+  - Moderator öffnet `/`, klickt "Neue Session starten", landet auf Moderatoren-Ansicht
+  - Teilnehmer gibt gültige Session-Nummer ein, landet auf Teilnehmer-Ansicht
+  - Ungültige Session-Nummer zeigt Inline-Fehlermeldung
+  - Moderator-Reconnect via Token-Eingabe öffnet Moderatoren-Ansicht
+

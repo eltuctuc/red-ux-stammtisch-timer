@@ -1,7 +1,7 @@
 # FEAT-2: Timer
 
 ## Status
-Aktueller Schritt: IA/UX
+Aktueller Schritt: Tech
 
 ## Abhängigkeiten
 - Benötigt: FEAT-1 (Session Management) – Timer läuft innerhalb einer Session
@@ -202,3 +202,133 @@ ParticipantView
 - PresetButtons: horizontal scrollbar auf sehr kleinen Screens (375px) oder 2-Zeilen-Wrap
 - CustomTimeInput: `inputmode="numeric"` für Ziffern-Keyboard
 - ShareSection bleibt ausklappbar auch auf Mobile; Teilnehmer-URL und Token gut kopierbar
+
+---
+
+## 3. Technisches Design
+*Ausgefüllt von: /solution-architect — 2026-03-27*
+
+### Component-Struktur
+
+```
+SessionPage                     – Routing-Container (aus FEAT-1)
+├── ModeratorView
+│   ├── TimerDisplay            – zustandsabhängige Darstellung (running/warning/expired)
+│   │   └── CountdownLabel      – MM:SS mit tabular-nums
+│   ├── ConnectionIndicator     – dezent, nur bei Verbindungsproblem sichtbar
+│   ├── PresetButtons           – 5 Buttons: 2 | 5 | 10 | 15 | 30 Min
+│   ├── CustomTimeInput         – Min-Feld + Sek-Feld + Inline-ErrorMessage
+│   ├── TimerControls           – Start / Pause / Resume / Reset (kontextabhängig)
+│   └── ShareSection            – collapsed by default
+│       ├── ToggleTrigger
+│       ├── SessionNumberDisplay
+│       └── CopyButton (×2: Teilnehmer-URL + Moderatoren-URL)
+└── ParticipantView
+    ├── TimerDisplay            – identische Komponente wie oben (read-only)
+    ├── ConnectionIndicator     – identisch
+    └── SessionBadge            – zeigt Session-Nummer dezent
+
+Gemeinsam genutzt:
+- TimerDisplay        – von Moderator + Participant View identisch verwendet
+- ConnectionIndicator – von beiden Views identisch verwendet
+- CopyButton          – von ShareSection und ggf. SessionBadge verwendet
+```
+
+### Daten-Model
+
+**Timer-Zustand im PartyKit Durable Object:**
+- `status`: 'idle' | 'running' | 'paused' | 'expired'
+- `totalDurationMs`: Gesamtdauer der aktuellen Timebox (Millisekunden)
+- `remainingMs`: Restzeit zum Zeitpunkt des letzten Pause/Reset/Start-Events
+- `startedAt`: Timestamp wann Timer zuletzt gestartet/fortgesetzt wurde (null wenn nicht laufend)
+- `lastActivityAt`: Timestamp des letzten Timer-Starts (für 3h-Alarm)
+
+**Berechnete Werte (Client-seitig, nicht gespeichert):**
+- `currentRemainingMs` = `remainingMs - (Date.now() - startedAt)` wenn status 'running'
+- `isWarning` = `currentRemainingMs ≤ totalDurationMs × 0.2`
+- `timerLabel` = MM:SS formatiert aus `currentRemainingMs`
+
+*Kein Server-Tick – der Server speichert Snapshots, der Client interpoliert.*
+
+Gespeichert in: PartyKit Durable Object (flüchtiger In-Memory-State, 3h TTL)
+
+### API / Daten-Fluss
+
+**WebSocket Message Types – vollständig:**
+
+Moderator → Server (nur wenn Token übereinstimmt):
+- `SET_DURATION` `{ durationMs }` – Dauer setzen (Preset oder Custom)
+- `START` – Timer starten (setzt `startedAt = now`, Status → 'running')
+- `PAUSE` – Timer pausieren (berechnet + speichert `remainingMs`, löscht `startedAt`)
+- `RESUME` – weiter laufen (setzt neuen `startedAt`, Status → 'running')
+- `RESET` – zurücksetzen auf `totalDurationMs`, Status → 'idle'
+
+Server → alle Clients (Broadcast nach jeder Zustandsänderung):
+- `STATE_UPDATE` `{ status, totalDurationMs, remainingMs, startedAt }` – vollständiger State
+
+Server → neu verbundener Client (on connect):
+- Sofortiger `STATE_UPDATE` mit aktuellem Zustand (kein Warten auf nächste Änderung)
+
+Server → alle Clients (bei Alarm-Auslösung nach 3h):
+- `SESSION_EXPIRED` – Clients zeigen "Session abgelaufen"-Meldung, Reconnect nicht möglich
+
+**Sound-Trigger:**
+- Client-seitig: wenn Status von 'running' auf 'expired' wechselt → Audio-API abspielen
+- Kein Server-seitiger Sound – jeder Client spielt lokal ab (Browser-Policy-konform)
+
+### Tech-Entscheidungen
+
+- **Kein Server-Tick:** Server speichert nur Snapshots (`startedAt` + `remainingMs`).
+  Clients berechnen aktuelle Restzeit lokal mit `requestAnimationFrame` oder `setInterval(1000)`.
+  Vorteile: kein kontinuierlicher WebSocket-Traffic, kein DO-Overhead, automatisch
+  sync-resistent (jeder Client rechnet unabhängig aber vom gleichen Server-Snapshot)
+- **Web Audio API für Sound:** Kein externes Audio-Package nötig; `AudioContext` ist
+  nativ im Browser verfügbar; erlaubt programmatisch erzeugten sanften Ton (kein
+  Audio-File-Hosting nötig)
+- **`useTimerSession` Custom Hook:** Kapselt WebSocket-Connect (via `partysocket`),
+  empfangene State-Updates und das Senden von Kommandos – von Moderator- und
+  Teilnehmer-View gleichermaßen nutzbar
+
+### Security-Anforderungen
+
+- **Authentifizierung:** Moderator-Kommandos werden Server-seitig nur ausgeführt,
+  wenn der mitgesendete Token mit dem gespeicherten `modToken` übereinstimmt
+- **Autorisierung:** Teilnehmer können keine Kommandos senden (Server ignoriert
+  Nachrichten ohne gültigen Token stillschweigend)
+- **Input-Validierung:**
+  - `durationMs` muss > 0 und ≤ 5.999.000 ms (99:59) sein
+  - Unbekannte Message-Types werden Server-seitig ignoriert
+- **OWASP-relevante Punkte:**
+  - Kein XSS-Risiko: Timer-Werte sind Numbers, keine User-generierten Strings im DOM
+  - DoS-Schutz: PartyKit / Cloudflare übernimmt Rate-Limiting auf Infrastrukturebene
+
+### Dependencies
+
+Keine neuen Dependencies für FEAT-2 (FEAT-1 installiert bereits alle nötigen Pakete).
+`partysocket` (Client) und `partykit` (Server-CLI) sind bereits installiert.
+
+Optional für Sound:
+- Keine externen Packages – Web Audio API ist Browser-nativ
+
+### Test-Setup
+
+- **Unit Tests (Vitest):**
+  - `currentRemainingMs`-Berechnung aus Server-Snapshot (verschiedene Zeitpunkte)
+  - Warning-Schwellwert: 20% wird korrekt erkannt (Grenzwerte testen)
+  - MM:SS-Formatierung: `0` → `00:00`, `61000` → `01:01`, `5999000` → `99:59`
+  - TimerDisplay: rendert korrekte CSS-Klassen für running / warning / expired
+  - CustomTimeInput: Validierung lehnt 0 und >99:59 ab, akzeptiert Grenzwerte
+
+- **Integration Tests:**
+  - PartyKit-Server: START-Kommando von Moderator ändert Status auf 'running' und
+    broadcastet STATE_UPDATE an alle Clients
+  - PartyKit-Server: PAUSE speichert korrekte `remainingMs`
+  - PartyKit-Server: Kommandos ohne Token werden ignoriert (kein State-Change)
+  - PartyKit-Server: Neu joinender Client erhält sofort aktuellen State
+
+- **E2E Tests (Playwright):**
+  - Moderator wählt 5-Min-Preset → klickt Start → Teilnehmer-Tab zeigt laufenden Timer
+  - Timer wechselt in Warning-State bei korrekter Zeit (≤20% Rest)
+  - Timer läuft auf 00:00 → expired-State in beiden Tabs sichtbar
+  - Moderator pausiert Timer → Teilnehmer sieht eingefrorene Zeit
+  - Reset stellt ursprüngliche Dauer wieder her (beide Tabs)
