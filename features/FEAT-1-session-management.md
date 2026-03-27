@@ -12,12 +12,12 @@ Aktueller Schritt: Spec
 *Ausgefüllt von: /requirements — 2026-03-27*
 
 ### Beschreibung
-Ein Moderator öffnet die Haupt-URL und erhält eine neue Session mit einzigartiger
-Session-Nummer. Er bekommt zwei URLs: eine Moderatoren-URL (mit Secret-Token) und
-eine Teilnehmer-URL. Teilnehmer gelangen entweder über die direkte URL oder durch
-manuelle Eingabe der Session-Nummer auf der Haupt-URL in die Session. Der Moderator
-kann seine Session nach einem Tab-Schließen wiederherstellen. Sessions verfallen nach
-3 Stunden ohne neuen Timer-Start.
+Die Haupt-URL bietet zwei Einstiegspunkte: "Neue Session starten" (für neue Workshops)
+und "Bestehende Session fortsetzen" (für Reconnect nach Tab-Schließen). Bei neuer Session
+erhält der Moderator eine Moderatoren-URL (mit Secret-Token) und eine Teilnehmer-URL.
+Teilnehmer gelangen über die direkte Teilnehmer-URL oder durch manuelle Eingabe der
+Session-Nummer auf der Haupt-URL in die Session. Sessions verfallen nach 3 Stunden
+ohne neuen Timer-Start.
 
 ### Definitionen
 - **Session:** Ein temporäres, geteiltes Timer-Environment mit eindeutiger Session-Nummer,
@@ -33,8 +33,10 @@ kann seine Session nach einem Tab-Schließen wiederherstellen. Sessions verfalle
 - **Inaktivität:** Kein neuer Timer-Start durch den Moderator innerhalb von 3 Stunden.
 
 ### User Stories
-- Als Moderator möchte ich beim Aufrufen der Haupt-URL automatisch eine neue Session
-  erhalten, um sofort loslegen zu können ohne manuelle Einrichtung.
+- Als Moderator möchte ich auf der Haupt-URL aktiv eine neue Session starten,
+  um einen neuen Workshop-Tag zu beginnen.
+- Als Moderator möchte ich auf der Haupt-URL eine bestehende Session fortsetzen,
+  um nach einem Tab-Schließen wieder einzusteigen ohne die Moderatoren-URL geöffnet zu haben.
 - Als Moderator möchte ich meine Moderatoren-URL per Copy-Button kopieren, um sie
   als Bookmark zu speichern und die Session nach einem Tab-Schließen wieder aufzunehmen.
 - Als Moderator möchte ich die Teilnehmer-URL per Copy-Button kopieren, um sie
@@ -47,8 +49,11 @@ kann seine Session nach einem Tab-Schließen wiederherstellen. Sessions verfalle
   aufnehmen können, damit ein versehentliches Tab-Schließen nichts kaputt macht.
 
 ### Acceptance Criteria
-- [ ] Beim Aufruf der Haupt-URL (`/`) wird automatisch eine neue Session erstellt
-      und die Moderatoren-Ansicht angezeigt
+- [ ] Die Haupt-URL zeigt zwei Aktionen: "Neue Session starten" (Button) und
+      "Bestehende Session fortsetzen" (Eingabefeld für Moderatoren-URL oder Token)
+- [ ] Klick auf "Neue Session starten" erstellt eine Session und öffnet die Moderatoren-Ansicht
+- [ ] Eingabe einer gültigen Moderatoren-URL (oder des Secret-Tokens) unter "Bestehende Session
+      fortsetzen" öffnet die Moderatoren-Ansicht der laufenden Session
 - [ ] Die Session-Nummer ist genau 4 Ziffern lang und wird zufällig generiert
 - [ ] Die Moderatoren-URL enthält einen Secret-Token als URL-Parameter (`?mod=<token>`)
 - [ ] Die Moderatoren-URL und Teilnehmer-URL sind jeweils per Copy-Button kopierbar;
@@ -63,8 +68,10 @@ kann seine Session nach einem Tab-Schließen wiederherstellen. Sessions verfalle
 - [ ] Eine Session verfällt serverseitig nach 3 Stunden ohne neuen Timer-Start
 
 ### Edge Cases
-- **Ungültige Session-Nummer eingegeben:** Fehlermeldung "Session nicht gefunden",
+- **Ungültige Session-Nummer (Teilnehmer-Flow):** Fehlermeldung "Session nicht gefunden",
   Eingabefeld bleibt aktiv für erneute Eingabe
+- **Ungültiger Token beim Reconnect-Flow:** Fehlermeldung "Session nicht gefunden oder
+  abgelaufen", Eingabefeld bleibt aktiv
 - **Abgelaufene Session-Nummer eingegeben:** Gleiche Fehlermeldung wie "nicht gefunden" –
   keine technischen Details an den Nutzer
 - **Moderatoren-URL wird von Teilnehmer aufgerufen:** Vollzugriff gewährt –
