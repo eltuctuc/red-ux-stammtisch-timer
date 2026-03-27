@@ -1,0 +1,7 @@
+projekt/node_modules/
+projekt/dist/
+projekt/.partykit/
+.env
+.env.local
+.env*.local
+.DS_Store
