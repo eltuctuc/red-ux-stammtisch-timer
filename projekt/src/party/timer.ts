@@ -42,6 +42,12 @@ export default class TimerServer implements Party.Server {
       return;
     }
 
+    // BUG-FEAT1-QA-020: restore persisted modToken after DO restart (survives hibernation/deployment)
+    if (this.state.modToken === null) {
+      const storedToken = await this.room.storage.get<string>('modToken');
+      if (storedToken) this.state.modToken = storedToken;
+    }
+
     const url = new URL(ctx.request.url);
     const tokenParam = url.searchParams.get('mod');
     // BUG-FEAT1-QA-014: distinguish new-session creation from reconnect
@@ -51,6 +57,8 @@ export default class TimerServer implements Party.Server {
       if (this.state.modToken === null) {
         // First moderator connects – claim the token
         this.state.modToken = tokenParam;
+        // BUG-FEAT1-QA-020: persist modToken so it survives DO restarts
+        await this.room.storage.put('modToken', tokenParam);
         this.modConnections.add(conn.id);
         // Bug fix BUG-FEAT1-QA-008: set session-expiry alarm on initial creation
         await this.room.storage.setAlarm(Date.now() + 3 * 60 * 60 * 1_000);
@@ -108,7 +116,10 @@ export default class TimerServer implements Party.Server {
 
     switch (cmd.type) {
       case 'SET_DURATION': {
-        const raw = cmd.durationMs ?? 0;
+        // BUG-FEAT1-QA-019: reject non-finite values (NaN, Infinity, strings) before clamping
+        const raw = typeof cmd.durationMs === 'number' && Number.isFinite(cmd.durationMs)
+          ? cmd.durationMs
+          : 0;
         // Clamp to [1000, 5_999_000] ms (1s – 99:59)
         const durationMs = Math.min(5_999_000, Math.max(1_000, raw));
         this.state.timer = {

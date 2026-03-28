@@ -52,7 +52,10 @@ export default function ConnectionIndicator({ status }: ConnectionIndicatorProps
             style={{
               background: 'none',
               border: 'none',
-              padding: 0,
+              padding: '0 var(--space-1)',
+              minHeight: '44px',
+              display: 'inline-flex',
+              alignItems: 'center',
               color: 'var(--color-accent)',
               fontSize: 'inherit',
               fontFamily: 'inherit',

@@ -13,7 +13,9 @@ export default function LandingPage() {
   const locationState = (location.state ?? {}) as LocationState;
 
   const [inputValue, setInputValue] = useState(locationState.input ?? '');
-  const [inputError, setInputError] = useState<string | null>(locationState.reconnectError ?? null);
+  const [inputError, setInputError] = useState<string | null>(null);
+  // BUG-FEAT1-UX-022: reconnectError belongs to the primary button area, not the SmartInput
+  const [primaryError, setPrimaryError] = useState<string | null>(locationState.reconnectError ?? null);
   const [primaryHovered, setPrimaryHovered] = useState(false);
   const [submitHovered, setSubmitHovered] = useState(false);
 
@@ -21,6 +23,7 @@ export default function LandingPage() {
   const inputMode = inputValue.length <= 4 ? 'numeric' : 'text';
 
   function handleNewSession() {
+    setPrimaryError(null);
     const sessionId = generateSessionId();
     const modToken = generateModToken();
     // BUG-FEAT1-QA-014: ?new=1 tells the server this is a creation attempt (not a reconnect)
@@ -30,6 +33,7 @@ export default function LandingPage() {
   function handleSmartInput(e: React.FormEvent) {
     e.preventDefault();
     setInputError(null);
+    setPrimaryError(null);
 
     if (!inputValue.trim()) {
       setInputError('Bitte eine Session-Nummer oder Moderatoren-URL eingeben.');
@@ -116,6 +120,19 @@ export default function LandingPage() {
           >
             Neue Session starten
           </button>
+          {/* BUG-FEAT1-UX-022: reconnectError shown here (near primary button), not in SmartInput */}
+          {primaryError && (
+            <p
+              role="alert"
+              style={{
+                marginTop: 'var(--space-2)',
+                fontSize: '13px',
+                color: 'var(--color-danger)',
+              }}
+            >
+              {primaryError}
+            </p>
+          )}
         </section>
 
         {/* Divider */}

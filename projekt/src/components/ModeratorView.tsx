@@ -23,6 +23,13 @@ export default function ModeratorView({ sessionId, modToken, isNew }: ModeratorV
   const roomExistsRetryCount = useRef<number>(0);
 
   // BUG-FEAT1-QA-015: All useEffects BEFORE any conditional returns
+  // BUG-FEAT1-QA-017: clean up ?new=1 from URL once connection is established
+  useEffect(() => {
+    if (connectionStatus === 'connected' && isNew) {
+      navigate(`/session/${sessionId}?mod=${modToken}`, { replace: true });
+    }
+  }, [connectionStatus, isNew, navigate, sessionId, modToken]);
+
   // Auto-retry with new session ID on collision (room already owned by someone else)
   // Max 3 retries to prevent infinite redirect loop (BUG-FEAT1-QA-006)
   useEffect(() => {

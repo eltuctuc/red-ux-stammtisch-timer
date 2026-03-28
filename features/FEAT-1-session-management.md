@@ -311,7 +311,7 @@ Kein REST-Backend. Alle Kommunikation über WebSocket (PartyKit).
 ---
 
 ## 5. QA Ergebnisse
-*Ausgefüllt von: /qa-engineer — 2026-03-28 (Re-QA nach Bug-Fix-Runde 3), /developer Bug-Fix-Runde 4 — 2026-03-28*
+*Ausgefüllt von: /qa-engineer — 2026-03-28 (Re-QA nach Bug-Fix-Runde 4)*
 
 ### Acceptance Criteria Status
 - [x] Haupt-URL zeigt zwei Aktionen ✅
@@ -329,30 +329,43 @@ Kein REST-Backend. Alle Kommunikation über WebSocket (PartyKit).
 
 ### Security-Check
 - Token-Validierung via modConnections-Set korrekt implementiert
-- Input-Validierung für Session-ID und durationMs vorhanden
+- Input-Validierung für Session-ID vorhanden; durationMs fehlt Finite-Prüfung → BUG-FEAT1-QA-019
 - XSS: keine innerHTML-Nutzung, React-Rendering überall
 - modToken in WS-URL sichtbar – dokumentierte, bewusste Entscheidung → BUG-FEAT1-QA-003 (Low)
+- modToken nicht in DO-Storage persistiert → BUG-FEAT1-QA-020 (High)
 
 ### A11y-Check
 - button:focus-visible + input:focus-visible global gesetzt ✅ (UX-002 + UX-013 gefixt)
 - aria-controls entfernt, hidden-Attribut korrekt ✅ (UX-007 gefixt)
 - ConnectionIndicator role="alert" + aria-live="assertive" im error-State ✅ (UX-018 gefixt)
+- CopyButton Erfolgs-Feedback ohne aria-live → BUG-FEAT1-UX-026
+- SessionPage Fehlerscreen ohne role="alert" → BUG-FEAT1-UX-024
+- Touch-Target "Seite neu laden" zu klein → BUG-FEAT1-UX-021
 
 ### Offene Bugs
 - BUG-FEAT1-QA-003 – modToken in WS-URL exponiert (Low, bewusste Entscheidung)
-- BUG-FEAT1-QA-013 – gegenstandslos durch QA-014 + UX-019 Fix (Low)
+- BUG-FEAT1-QA-017 – ?new=1 bleibt permanent in Browser-URL (Medium)
+- BUG-FEAT1-QA-018 – Auto-Reconnect sendet ?new=1 erneut (Low)
+- BUG-FEAT1-QA-019 – SET_DURATION mit durationMs: NaN nicht abgefangen (Medium)
+- BUG-FEAT1-QA-020 – modToken nicht in DO-Storage persistiert (High)
 - BUG-FEAT1-UX-016 – "Neue Session starten" ohne Klick-Feedback (Low)
 - BUG-FEAT1-UX-020 – ShareSection: hidden-Attribut und display:none redundant (Low)
+- BUG-FEAT1-UX-021 – ConnectionIndicator "Seite neu laden"-Button zu kleines Touch-Target (Medium)
+- BUG-FEAT1-UX-022 – reconnectError erscheint im falschen UI-Bereich + falsches aria-invalid (Medium)
+- BUG-FEAT1-UX-023 – ShareSection Toggle-Button ohne aria-controls (Low)
+- BUG-FEAT1-UX-024 – SessionPage Fehlerscreen ohne role="alert" (Medium)
+- BUG-FEAT1-UX-025 – inputMode wechselt live bei Eingabe – Tastatursprung auf Mobile (Low)
+- BUG-FEAT1-UX-026 – CopyButton Erfolgs-Feedback ohne aria-live (Medium)
+- BUG-FEAT1-UX-027 – sessionExpired-Screen ohne h1 (Low)
 
 ### Bereits behobene Bugs (Bug-Fix-Runden 1–4)
-- ~~QA-001~~ Session-Kollisions-Handling · ~~QA-002~~ SESSION_NOT_FOUND · ~~QA-004~~ Token-Only-AC-Text · ~~QA-005~~ CopyButton setTimeout-Leak · ~~QA-006~~ ROOM_EXISTS-Retry-Loop · ~~QA-007~~ Ungültiger Token falscher Screen · ~~QA-008~~ Session-Expiry-Alarm · ~~QA-009~~ ParticipantView Fehlerarten · ~~QA-010~~ ModeratorView SESSION_NOT_FOUND · ~~QA-011~~ INVALID_TOKEN nie gesendet · ~~QA-012~~ ModeratorView 00:00 beim Reconnect
-- ~~UX-001~~ Umlaute · ~~UX-002~~ Fokus-/Hover-States · ~~UX-003~~ INVALID_TOKEN kein Escape · ~~UX-004~~ CopyButton Silent Fail · ~~UX-005~~ Placeholder nur Teilnehmer · ~~UX-006~~ URL truncated · ~~UX-007~~ aria-controls defekt · ~~UX-008~~ Unicode-Icons · ~~UX-009~~ ShareSection Hover/Fokus · ~~UX-010~~ ParticipantView Loading-State · ~~UX-011~~ isStarting-State täuschend · ~~UX-012~~ CopyButton Fehlermeldung truncated · ~~UX-013~~ input:focus-visible fehlte · ~~UX-014~~ ModeratorView 00:00 beim Verbindungsaufbau · ~~UX-015~~ ConnectionIndicator ohne Handlungsanweisung
+- ~~QA-001~~ Session-Kollisions-Handling · ~~QA-002~~ SESSION_NOT_FOUND · ~~QA-004~~ Token-Only-AC-Text · ~~QA-005~~ CopyButton setTimeout-Leak · ~~QA-006~~ ROOM_EXISTS-Retry-Loop · ~~QA-007~~ Ungültiger Token falscher Screen · ~~QA-008~~ Session-Expiry-Alarm · ~~QA-009~~ ParticipantView Fehlerarten · ~~QA-010~~ ModeratorView SESSION_NOT_FOUND · ~~QA-011~~ INVALID_TOKEN nie gesendet · ~~QA-012~~ ModeratorView 00:00 beim Reconnect · ~~QA-013~~ stille Navigation nach ROOM_EXISTS-Exhaustion (de facto gefixt durch QA-014/UX-019) · ~~QA-014~~ ROOM_EXISTS-Regression · ~~QA-015~~ INVALID_TOKEN useEffect hinter sessionExpired-Block · ~~QA-016~~ conn.close() fehlte nach Error-Messages
+- ~~UX-001~~ Umlaute · ~~UX-002~~ Fokus-/Hover-States · ~~UX-003~~ INVALID_TOKEN kein Escape · ~~UX-004~~ CopyButton Silent Fail · ~~UX-005~~ Placeholder nur Teilnehmer · ~~UX-006~~ URL truncated · ~~UX-007~~ aria-controls defekt · ~~UX-008~~ Unicode-Icons · ~~UX-009~~ ShareSection Hover/Fokus · ~~UX-010~~ ParticipantView Loading-State · ~~UX-011~~ isStarting-State täuschend · ~~UX-012~~ CopyButton Fehlermeldung truncated · ~~UX-013~~ input:focus-visible fehlte · ~~UX-014~~ ModeratorView 00:00 beim Verbindungsaufbau · ~~UX-015~~ ConnectionIndicator ohne Handlungsanweisung · ~~UX-017~~ CopyButton Layout-Shift · ~~UX-018~~ ConnectionIndicator ohne role="alert" · ~~UX-019~~ Retry-Erschöpfung ohne Fehlerfeedback
 
 ### Summary
-- ✅ 11/12 Acceptance Criteria passed (1 nicht bestanden → QA-014 Regression)
-- ✅ 5 Bugs gefixt in Runde 3 (QA-011, QA-012, UX-012–015)
+- ✅ 12/12 Acceptance Criteria passed
 - ✅ 6 Bugs gefixt in Runde 4 (QA-014, QA-015, QA-016, UX-017, UX-018, UX-019)
-- ❌ 4 Bugs offen (0 High, 0 Medium, 4 Low)
+- ❌ 14 Bugs offen (1 High, 5 Medium, 8 Low)
 
 ### Production-Ready
-✅ Ready – alle High und Medium Bugs behoben (Runde 4). Verbleibende 4 Low Bugs nicht release-blocking.
+❌ NOT Ready – QA-020 (High): modToken nicht in DO-Storage persistiert. Nach DO-Restart kann jeder mit Session-Nummer die Moderatoren-Rolle übernehmen.

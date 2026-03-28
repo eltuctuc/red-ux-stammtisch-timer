@@ -28,7 +28,8 @@ export default function SessionPage() {
           textAlign: 'center',
         }}
       >
-        <p style={{ fontSize: '18px', fontWeight: 500 }}>Ungültige Session-Nummer.</p>
+        {/* BUG-FEAT1-UX-024: role="alert" so screen readers announce the error immediately */}
+        <p role="alert" style={{ fontSize: '18px', fontWeight: 500 }}>Ungültige Session-Nummer.</p>
         <Link
           to="/"
           style={{

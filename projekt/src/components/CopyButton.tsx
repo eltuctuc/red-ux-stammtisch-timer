@@ -70,6 +70,14 @@ export default function CopyButton({ value, label }: CopyButtonProps) {
   // BUG-FEAT1-UX-017: error text rendered below button (not inside) to prevent layout shift
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-1)' }}>
+      {/* BUG-FEAT1-UX-026: visually hidden live region so screen readers announce copy success */}
+      <span
+        aria-live="polite"
+        aria-atomic="true"
+        style={{ position: 'absolute', width: '1px', height: '1px', overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap' }}
+      >
+        {copied ? 'In Zwischenablage kopiert' : ''}
+      </span>
       <button
         type="button"
         onClick={handleClick}
