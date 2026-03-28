@@ -20,7 +20,7 @@
   --timer-bg-expired: #FFF1F1;
   --timer-text-running: #1C2B3A;
   --timer-text-paused: #1D4ED8;
-  --timer-text-warning: #8A5500;
+  --timer-text-warning: #7A4900; /* BUG-FEAT2-UX-008: increased contrast from ~4.6:1 to ~5.2:1 */
   --timer-text-expired: #8A1F1F;
 
   --space-1: 4px;

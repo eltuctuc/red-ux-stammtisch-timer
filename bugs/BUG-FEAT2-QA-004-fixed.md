@@ -4,7 +4,7 @@
 - **Severity:** Medium
 - **Bereich:** Functional
 - **Gefunden von:** QA Engineer
-- **Status:** Open
+- **Status:** Fixed — 2026-03-28
 
 ## Beschreibung
 In `CustomTimeInput.tsx` ist die Validierung der Sekunden außerhalb des gültigen Bereichs (< 0 oder > 59) **Dead Code**, da die `onChange`-Handler bereits alle Nicht-Ziffern-Eingaben entfernen und auf 2 Stellen begrenzen. Relevanter ist: Die Reihenfolge der Validierungen erlaubt es, `99:60` oder `99:61` ... bis `99:99` als gültig passieren zu lassen.

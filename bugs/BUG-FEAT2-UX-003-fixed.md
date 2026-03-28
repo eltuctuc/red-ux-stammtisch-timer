@@ -5,7 +5,7 @@
 - **Bereich:** A11y | UX
 - **Gefunden von:** UX Reviewer
 - **Persona:** Mia (Moderator)
-- **Status:** Open
+- **Status:** Fixed — 2026-03-28
 
 ## Beschreibung
 In `CustomTimeInput.tsx` teilen sich beide Eingabefelder (Minuten und Sekunden) dasselbe

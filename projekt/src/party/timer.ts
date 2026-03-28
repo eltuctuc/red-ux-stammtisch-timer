@@ -102,9 +102,12 @@ export default class TimerServer implements Party.Server {
       return;
     }
 
+    // BUG-FEAT2-QA-005: reject non-string messages early instead of passing '' to JSON.parse
+    if (typeof message !== 'string') return;
+
     let cmd: { type: string; durationMs?: number };
     try {
-      cmd = JSON.parse(typeof message === 'string' ? message : '') as {
+      cmd = JSON.parse(message) as {
         type: string;
         durationMs?: number;
       };
@@ -133,6 +136,8 @@ export default class TimerServer implements Party.Server {
 
       case 'START': {
         if (timer.status !== 'idle' && timer.status !== 'expired') return;
+        // BUG-FEAT2-QA-006: reject start without a duration set
+        if (timer.totalDurationMs === 0) return;
         const now = Date.now();
         this.state.timer = {
           ...timer,

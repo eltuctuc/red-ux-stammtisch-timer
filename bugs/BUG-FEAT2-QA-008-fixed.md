@@ -5,7 +5,7 @@
 - **Severity:** Low
 - **Bereich:** Functional
 - **Gefunden von:** QA Engineer
-- **Status:** Open
+- **Status:** Fixed — 2026-03-28
 
 ## Beschreibung
 Die `ModeratorView` bestimmt, ob die ShareSection beim ersten Laden aufgeklappt sein soll:

@@ -4,7 +4,7 @@
 - **Severity:** Medium
 - **Bereich:** Functional
 - **Gefunden von:** QA Engineer
-- **Status:** Open
+- **Status:** Fixed — 2026-03-28
 
 ## Beschreibung
 Im Server (`timer.ts`) wird bei `onMessage` für `ArrayBuffer`-Nachrichten ein leerer String an `JSON.parse` übergeben:

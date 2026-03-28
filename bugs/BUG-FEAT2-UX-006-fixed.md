@@ -5,7 +5,7 @@
 - **Bereich:** A11y
 - **Gefunden von:** UX Reviewer
 - **Persona:** Mia (Moderator)
-- **Status:** Open
+- **Status:** Fixed — 2026-03-28
 
 ## Beschreibung
 `ShareSection.tsx` implementiert eine Accordion-Komponente (Toggle-Button + expandierbarer

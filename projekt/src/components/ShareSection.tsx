@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import CopyButton from './CopyButton';
 
 interface ShareSectionProps {
@@ -10,6 +10,20 @@ interface ShareSectionProps {
 export default function ShareSection({ sessionId, modToken, initiallyOpen = false }: ShareSectionProps) {
   const [isOpen, setIsOpen] = useState(initiallyOpen);
   const [isHovered, setIsHovered] = useState(false);
+
+  // BUG-FEAT2-UX-006: focus first interactive element when section is opened by user
+  const firstCopyWrapperRef = useRef<HTMLDivElement>(null);
+  const isFirstRender = useRef(true);
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    if (isOpen) {
+      const btn = firstCopyWrapperRef.current?.querySelector<HTMLButtonElement>('button');
+      btn?.focus();
+    }
+  }, [isOpen]);
 
   const origin = typeof window !== 'undefined' ? window.location.origin : '';
   const participantUrl = `${origin}/session/${sessionId}`;
@@ -87,7 +101,7 @@ export default function ShareSection({ sessionId, modToken, initiallyOpen = fals
         <hr style={{ border: 'none', borderTop: '1px solid var(--color-border)' }} />
 
         {/* Teilnehmer-URL */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+        <div ref={firstCopyWrapperRef} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
           <p style={{ fontSize: '13px', color: 'var(--color-text-secondary)', fontWeight: 500 }}>
             Link für Teilnehmer
           </p>

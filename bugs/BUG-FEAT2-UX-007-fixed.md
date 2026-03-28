@@ -5,7 +5,7 @@
 - **Bereich:** UX | Konsistenz
 - **Gefunden von:** UX Reviewer
 - **Persona:** Beide
-- **Status:** Open
+- **Status:** Fixed — 2026-03-28 (bereits implementiert: SVG-Icons in CopyButton vorhanden)
 
 ## Beschreibung
 In `CopyButton.tsx` (Zeile 62) werden Unicode-Zeichen als visuelle Icons verwendet:

@@ -5,7 +5,7 @@
 - **Bereich:** UX | Feedback
 - **Gefunden von:** UX Reviewer
 - **Persona:** Tom (Teilnehmer)
-- **Status:** Open
+- **Status:** Fixed — 2026-03-28
 
 ## Beschreibung
 Im `idle`-Zustand (kein Timer gestartet, keine Dauer gewählt) zeigt `TimerDisplay` den Wert

@@ -58,7 +58,7 @@ export default function TimerControls({
         flexWrap: 'wrap',
       }}
     >
-      {(status === 'idle' || status === 'expired') && (
+      {status === 'idle' && (
         <button
           type="button"
           onClick={onStart}
@@ -67,6 +67,19 @@ export default function TimerControls({
           style={primaryStyle(isDisabled || !hasDuration)}
         >
           Starten
+        </button>
+      )}
+
+      {/* BUG-FEAT2-UX-009: rename button in expired state to clarify it repeats same duration */}
+      {status === 'expired' && (
+        <button
+          type="button"
+          onClick={onStart}
+          disabled={isDisabled || !hasDuration}
+          aria-label="Timer nochmal starten"
+          style={primaryStyle(isDisabled || !hasDuration)}
+        >
+          Nochmal starten
         </button>
       )}
 

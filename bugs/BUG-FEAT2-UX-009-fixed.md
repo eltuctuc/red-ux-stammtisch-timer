@@ -5,7 +5,7 @@
 - **Bereich:** UX | Konsistenz | Flow
 - **Gefunden von:** UX Reviewer
 - **Persona:** Mia (Moderator)
-- **Status:** Open
+- **Status:** Fixed — 2026-03-28
 
 ## Beschreibung
 In `TimerControls.tsx` (Zeilen 61–71) ist der Start-Button sichtbar wenn

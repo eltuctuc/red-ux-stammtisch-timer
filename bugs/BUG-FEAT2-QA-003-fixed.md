@@ -4,7 +4,7 @@
 - **Severity:** Medium
 - **Bereich:** Logic
 - **Gefunden von:** QA Engineer
-- **Status:** Open
+- **Status:** Fixed — 2026-03-28
 
 ## Beschreibung
 Die `isWarning`-Berechnung in `useTimerSession.ts` verwendet `displayRemainingMs` für den Schwellwert-Vergleich:

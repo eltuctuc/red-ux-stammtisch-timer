@@ -21,6 +21,9 @@ export default function ModeratorView({ sessionId, modToken, isNew }: ModeratorV
     useTimerSession({ sessionId, modToken, isNew }); // BUG-FEAT1-QA-014
 
   const roomExistsRetryCount = useRef<number>(0);
+  // BUG-FEAT2-QA-008: compute initiallyOpen once after first timerState arrives,
+  // using sessionStorage so the ShareSection only auto-opens once per browser session
+  const shareInitiallyOpenRef = useRef<boolean | null>(null);
 
   // BUG-FEAT1-QA-015: All useEffects BEFORE any conditional returns
   // BUG-FEAT1-QA-017: clean up ?new=1 from URL once connection is established
@@ -89,8 +92,17 @@ export default function ModeratorView({ sessionId, modToken, isNew }: ModeratorV
   const presetValues = [2, 5, 10, 15, 30].map((m) => m * 60 * 1000);
   const selectedPreset = presetValues.includes(totalDurationMs) ? totalDurationMs : null;
 
-  // ShareSection beim ersten Laden aufgeklappt wenn Timer noch nie gestartet wurde
-  const isNewSession = status === 'idle' && totalDurationMs === 0;
+  // BUG-FEAT2-QA-008: only open ShareSection once after first load, not on every reload
+  if (shareInitiallyOpenRef.current === null && timerState !== null) {
+    const key = `share-seen-${sessionId}`;
+    if (!sessionStorage.getItem(key)) {
+      shareInitiallyOpenRef.current = status === 'idle' && totalDurationMs === 0;
+      sessionStorage.setItem(key, '1');
+    } else {
+      shareInitiallyOpenRef.current = false;
+    }
+  }
+  const isNewSession = shareInitiallyOpenRef.current ?? false;
 
   // Controls deaktivieren bei Verbindungsproblemen
   const controlsDisabled = connectionStatus !== 'connected';
@@ -159,6 +171,12 @@ export default function ModeratorView({ sessionId, modToken, isNew }: ModeratorV
           selectedMs={selectedPreset}
           disabled={controlsDisabled || status === 'running'}
         />
+        {/* BUG-FEAT2-UX-005: explain why presets are disabled while timer is running */}
+        {status === 'running' && (
+          <p style={{ fontSize: '13px', color: 'var(--color-text-secondary)' }}>
+            Timer pausieren um Dauer zu ändern
+          </p>
+        )}
         <CustomTimeInput
           onSubmit={handleSetDuration}
           disabled={controlsDisabled || status === 'running'}

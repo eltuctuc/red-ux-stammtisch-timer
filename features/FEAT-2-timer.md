@@ -387,26 +387,25 @@ Optional für Sound:
 ### Offene Bugs
 - ~~BUG-FEAT2-QA-001~~ – Sound-Trigger Race Condition (High) → **Fixed**
 - ~~BUG-FEAT2-QA-002~~ – Server setzt Status nie auf 'expired' (Critical) → **Fixed**
-- BUG-FEAT2-QA-003 – isWarning true auch bei pausiertem Timer (Medium)
-- BUG-FEAT2-QA-004 – CustomTimeInput Dead Code (Medium)
-- BUG-FEAT2-QA-005 – ArrayBuffer crasht JSON.parse (Medium)
-- BUG-FEAT2-QA-006 – START ohne totalDurationMs-Check (Medium)
-- BUG-FEAT2-QA-007 – AudioContext nicht geschlossen (Low)
-- BUG-FEAT2-QA-008 – ShareSection öffnet sich bei jedem Reload (Low)
+- ~~BUG-FEAT2-QA-003~~ – isWarning true auch bei pausiertem Timer (Medium) → **Fixed**
+- ~~BUG-FEAT2-QA-004~~ – CustomTimeInput Dead Code (Medium) → **Fixed**
+- ~~BUG-FEAT2-QA-005~~ – ArrayBuffer crasht JSON.parse (Medium) → **Fixed**
+- ~~BUG-FEAT2-QA-006~~ – START ohne totalDurationMs-Check (Medium) → **Fixed**
+- ~~BUG-FEAT2-QA-007~~ – AudioContext nicht geschlossen (Low) → **Fixed**
+- ~~BUG-FEAT2-QA-008~~ – ShareSection öffnet sich bei jedem Reload (Low) → **Fixed**
 - ~~BUG-FEAT2-UX-001~~ – Paused-Zustand visuell = Running (High) → **Fixed**
 - ~~BUG-FEAT2-UX-002~~ – aria-live auf tickendem Timer (High) → **Fixed**
-- BUG-FEAT2-UX-003 – Beide Felder als aria-invalid (Medium)
-- BUG-FEAT2-UX-004 – Idle zeigt "00:00" (Medium)
-- BUG-FEAT2-UX-005 – Deaktivierte Presets ohne Erklärung (Low)
-- BUG-FEAT2-UX-006 – aria-controls zeigt ins Leere (Medium)
-- BUG-FEAT2-UX-007 – Unicode ⎘ statt SVG-Icon (Low)
-- BUG-FEAT2-UX-008 – Warning-State Kontrast ~4.6:1 (Medium)
-- BUG-FEAT2-UX-009 – Expired + Starten-Button gleichzeitig (Medium)
+- ~~BUG-FEAT2-UX-003~~ – Beide Felder als aria-invalid (Medium) → **Fixed**
+- ~~BUG-FEAT2-UX-004~~ – Idle zeigt "00:00" (Medium) → **Fixed**
+- ~~BUG-FEAT2-UX-005~~ – Deaktivierte Presets ohne Erklärung (Low) → **Fixed**
+- ~~BUG-FEAT2-UX-006~~ – aria-controls zeigt ins Leere + kein Fokus-Management (Medium) → **Fixed**
+- ~~BUG-FEAT2-UX-007~~ – Unicode ⎘ statt SVG-Icon (Low) → **Fixed** (war bereits implementiert)
+- ~~BUG-FEAT2-UX-008~~ – Warning-State Kontrast ~4.6:1 (Medium) → **Fixed**
+- ~~BUG-FEAT2-UX-009~~ – Expired + Starten-Button gleichzeitig (Medium) → **Fixed**
 
 ### Summary
 - ✅ 7 Acceptance Criteria passed
-- ✅ 1 Critical + 3 High Bugs Fixed
-- ❌ 13 Bugs remaining (0 Critical, 0 High, 8 Medium, 5 Low)
+- ✅ Alle 17 Bugs gefixt (1 Critical, 4 High, 8 Medium, 4 Low)
 
 ### Production-Ready
-⏳ Pending re-QA – Critical + High fixed, Medium/Low open
+⏳ Pending re-QA

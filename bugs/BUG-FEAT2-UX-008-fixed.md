@@ -5,7 +5,7 @@
 - **Bereich:** A11y
 - **Gefunden von:** UX Reviewer
 - **Persona:** Tom (Teilnehmer)
-- **Status:** Open
+- **Status:** Fixed — 2026-03-28
 
 ## Beschreibung
 Die Timer-Farben für den Warning-State sind in `index.css` definiert als:

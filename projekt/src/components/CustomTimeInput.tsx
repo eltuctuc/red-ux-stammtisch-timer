@@ -5,21 +5,34 @@ interface CustomTimeInputProps {
   disabled?: boolean;
 }
 
+// BUG-FEAT2-UX-003: track which field caused the error for per-field aria-invalid
+type ErrorField = 'seconds' | 'both' | null;
+
 export default function CustomTimeInput({ onSubmit, disabled }: CustomTimeInputProps) {
   const [minutes, setMinutes] = useState('');
   const [seconds, setSeconds] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [errorField, setErrorField] = useState<ErrorField>(null);
   const id = useId();
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    setErrorField(null);
 
     const mins = parseInt(minutes || '0', 10);
     const secs = parseInt(seconds || '0', 10);
 
     if (isNaN(mins) || isNaN(secs)) {
       setError('Bitte gültige Zahlen eingeben.');
+      setErrorField('both');
+      return;
+    }
+
+    // BUG-FEAT2-QA-004: check seconds range before computing total (removes dead code)
+    if (secs > 59) {
+      setError('Sekunden müssen zwischen 0 und 59 liegen.');
+      setErrorField('seconds');
       return;
     }
 
@@ -27,16 +40,13 @@ export default function CustomTimeInput({ onSubmit, disabled }: CustomTimeInputP
 
     if (totalMs < 1000) {
       setError('Mindestdauer: 1 Sekunde.');
+      setErrorField('both');
       return;
     }
 
-    if (mins > 99 || (mins === 99 && secs > 59)) {
+    if (totalMs > 5_999_000) {
       setError('Maximaldauer: 99:59.');
-      return;
-    }
-
-    if (secs < 0 || secs > 59) {
-      setError('Sekunden müssen zwischen 0 und 59 liegen.');
+      setErrorField('both');
       return;
     }
 
@@ -46,6 +56,8 @@ export default function CustomTimeInput({ onSubmit, disabled }: CustomTimeInputP
   }
 
   const errorId = `${id}-error`;
+  const minsHasError = errorField === 'both';
+  const secsHasError = errorField === 'seconds' || errorField === 'both';
 
   return (
     <form onSubmit={handleSubmit} noValidate>
@@ -73,16 +85,17 @@ export default function CustomTimeInput({ onSubmit, disabled }: CustomTimeInputP
             onChange={(e) => {
               setMinutes(e.target.value.replace(/\D/g, '').slice(0, 2));
               setError(null);
+              setErrorField(null);
             }}
             placeholder="0"
             disabled={disabled}
-            aria-describedby={error ? errorId : undefined}
-            aria-invalid={error ? 'true' : undefined}
+            aria-describedby={minsHasError ? errorId : undefined}
+            aria-invalid={minsHasError ? 'true' : undefined}
             style={{
               width: '64px',
               height: '44px',
               padding: '0 var(--space-3)',
-              border: `1px solid ${error ? 'var(--color-danger)' : 'var(--color-border)'}`,
+              border: `1px solid ${minsHasError ? 'var(--color-danger)' : 'var(--color-border)'}`,
               borderRadius: 'var(--radius-md)',
               fontSize: '16px',
               textAlign: 'center',
@@ -121,16 +134,17 @@ export default function CustomTimeInput({ onSubmit, disabled }: CustomTimeInputP
             onChange={(e) => {
               setSeconds(e.target.value.replace(/\D/g, '').slice(0, 2));
               setError(null);
+              setErrorField(null);
             }}
             placeholder="00"
             disabled={disabled}
-            aria-describedby={error ? errorId : undefined}
-            aria-invalid={error ? 'true' : undefined}
+            aria-describedby={secsHasError ? errorId : undefined}
+            aria-invalid={secsHasError ? 'true' : undefined}
             style={{
               width: '64px',
               height: '44px',
               padding: '0 var(--space-3)',
-              border: `1px solid ${error ? 'var(--color-danger)' : 'var(--color-border)'}`,
+              border: `1px solid ${secsHasError ? 'var(--color-danger)' : 'var(--color-border)'}`,
               borderRadius: 'var(--radius-md)',
               fontSize: '16px',
               textAlign: 'center',

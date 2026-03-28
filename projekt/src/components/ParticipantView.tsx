@@ -116,6 +116,20 @@ export default function ParticipantView({ sessionId }: ParticipantViewProps) {
     >
       <TimerDisplay status={status} displayMs={displayMs} isWarning={isWarning} />
 
+      {/* BUG-FEAT2-UX-004: help participants distinguish idle from expired */}
+      {status === 'idle' && timerState !== null && (
+        <p
+          aria-live="polite"
+          style={{
+            fontSize: '15px',
+            color: 'var(--color-text-secondary)',
+            textAlign: 'center',
+          }}
+        >
+          Warten auf nächsten Timer…
+        </p>
+      )}
+
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--space-2)' }}>
         <SessionBadge sessionId={sessionId} />
         <ConnectionIndicator status={connectionStatus} />

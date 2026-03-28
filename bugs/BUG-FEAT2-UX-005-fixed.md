@@ -5,7 +5,7 @@
 - **Bereich:** UX | Feedback
 - **Gefunden von:** UX Reviewer
 - **Persona:** Mia (Moderator)
-- **Status:** Open
+- **Status:** Fixed — 2026-03-28
 
 ## Beschreibung
 In `ModeratorView.tsx` (Zeilen 111–119) werden `PresetButtons` und `CustomTimeInput`

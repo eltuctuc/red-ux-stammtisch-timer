@@ -4,7 +4,7 @@
 - **Severity:** Low
 - **Bereich:** Performance
 - **Gefunden von:** QA Engineer
-- **Status:** Open
+- **Status:** Fixed — 2026-03-28
 
 ## Beschreibung
 Die `playExpireSound`-Funktion in `useTimerSession.ts` erstellt bei jedem Aufruf einen neuen `AudioContext`:

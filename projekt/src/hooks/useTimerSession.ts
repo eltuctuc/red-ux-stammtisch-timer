@@ -29,6 +29,8 @@ function playExpireSound() {
     gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2.5);
     osc.start(ctx.currentTime);
     osc.stop(ctx.currentTime + 2.5);
+    // BUG-FEAT2-QA-007: close AudioContext after playback to free browser resources
+    osc.addEventListener('ended', () => { void ctx.close(); });
   } catch {
     // Browser-Policy kann AudioContext blockieren – Timer läuft trotzdem weiter
   }
@@ -171,11 +173,11 @@ export function useTimerSession({
   }, []);
 
   // Derived state
+  // BUG-FEAT2-QA-003: isWarning only when timer is actively running (not paused)
   const isWarning =
     serverState !== null &&
     serverState.totalDurationMs > 0 &&
-    serverState.status !== 'idle' &&
-    serverState.status !== 'expired' &&
+    serverState.status === 'running' &&
     displayRemainingMs <= serverState.totalDurationMs * 0.2;
 
   const timerState =
