@@ -5,7 +5,7 @@
 - **Bereich:** UX | Copy
 - **Gefunden von:** UX Reviewer
 - **Persona:** Mia (Moderator)
-- **Status:** Open
+- **Status:** Fixed
 
 ## Beschreibung
 In `ShareSection.tsx` (Zeile 116) wird die Moderatoren-URL auf 60 Zeichen begrenzt angezeigt:
@@ -43,3 +43,6 @@ Copy-Button ergänzen.
 
 ## Priority
 Nice-to-have
+
+## Fix (2026-03-28)
+ShareSection.tsx: .slice(0, 60) und &hellip; entfernt. Moderatoren-URL wird vollständig mit word-break: break-all angezeigt (identisch zur Teilnehmer-URL).

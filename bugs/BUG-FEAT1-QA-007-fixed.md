@@ -4,7 +4,7 @@
 - **Severity:** Medium
 - **Bereich:** Functional
 - **Gefunden von:** QA Engineer
-- **Status:** Open
+- **Status:** Fixed
 
 ## Steps to Reproduce
 1. Moderator gibt auf der Landing Page eine vollständige Moderatoren-URL mit ungültigem Token ein (z.B. korrekte sessionId, aber falscher Token)
@@ -38,3 +38,6 @@ Zusätzlich: AC-03 ist partiell korrekt (gültige URL öffnet Moderatoren-Ansich
 
 ## Priority
 Fix before release
+
+## Fix (2026-03-28)
+ModeratorView navigiert bei INVALID_TOKEN zurück zur LandingPage mit Router-State (reconnectError + input). LandingPage liest State on mount und zeigt Inline-Fehler mit vorausgefülltem Input-Feld.

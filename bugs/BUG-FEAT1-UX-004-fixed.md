@@ -5,7 +5,7 @@
 - **Bereich:** Feedback
 - **Gefunden von:** UX Reviewer
 - **Persona:** Mia (Moderator)
-- **Status:** Open
+- **Status:** Fixed
 
 ## Beschreibung
 In `CopyButton.tsx` (Zeilen 27–35) wird ein Clipboard-Fehler stillschweigend ignoriert (`catch {}`).
@@ -34,3 +34,6 @@ oder den URL-Text selektieren damit Nutzer ihn manuell kopieren können.
 
 ## Priority
 Fix before release
+
+## Fix (2026-03-28)
+CopyButton.tsx: copyError-State im catch-Block gesetzt. Zeigt 'Nicht kopiert – bitte manuell kopieren' für 3 Sekunden mit rotem Hintergrund.

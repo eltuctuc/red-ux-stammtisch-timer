@@ -100,39 +100,20 @@ export default function ModeratorView({ sessionId, modToken }: ModeratorViewProp
     );
   }
 
-  if (connectionError?.code === 'INVALID_TOKEN') {
-    return (
-      <main
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          minHeight: '60vh',
-          gap: 'var(--space-4)',
-          padding: 'var(--space-4)',
-          textAlign: 'center',
-        }}
-      >
-        <p role="alert" style={{ color: 'var(--color-danger)', fontWeight: 500 }}>
-          Ungültiger Moderatoren-Token. Bitte die Moderatoren-URL überprüfen.
-        </p>
-        <Link
-          to="/"
-          style={{
-            color: 'var(--color-accent)',
-            fontWeight: 500,
-            textDecoration: 'none',
-            padding: 'var(--space-2) var(--space-4)',
-            border: '1px solid var(--color-accent)',
-            borderRadius: 'var(--radius-md)',
-          }}
-        >
-          Zurück zur Startseite
-        </Link>
-      </main>
-    );
-  }
+  // INVALID_TOKEN: redirect back to LandingPage with inline error (spec: error stays on landing page)
+  useEffect(() => {
+    if (connectionError?.code === 'INVALID_TOKEN') {
+      const origin = typeof window !== 'undefined' ? window.location.origin : '';
+      const originalInput = `${origin}/session/${sessionId}?mod=${modToken}`;
+      navigate('/', {
+        replace: true,
+        state: {
+          reconnectError: 'Session nicht gefunden oder abgelaufen. Bitte überprüfe deine Moderatoren-URL.',
+          input: originalInput,
+        },
+      });
+    }
+  }, [connectionError, navigate, sessionId, modToken]);
 
   // ROOM_EXISTS is handled by useEffect above (auto-redirect); show nothing while redirecting
   if (connectionError?.code === 'ROOM_EXISTS') {

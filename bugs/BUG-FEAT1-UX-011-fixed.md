@@ -4,7 +4,7 @@
 - **Severity:** Low
 - **Bereich:** UX | Copy
 - **Gefunden von:** UX Reviewer
-- **Status:** Open
+- **Status:** Fixed
 
 ## Problem
 
@@ -42,3 +42,6 @@ Entweder den Loading-State entfernen da er technisch nicht belegt ist (sofortige
 
 ## Priority
 Nice-to-have
+
+## Fix (2026-03-28)
+isStarting-State aus LandingPage.tsx entfernt. handleNewSession ist nun synchron – kein täuschender Loading-State mehr. Button navigiert direkt.

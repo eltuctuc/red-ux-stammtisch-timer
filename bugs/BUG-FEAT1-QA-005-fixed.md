@@ -4,7 +4,7 @@
 - **Severity:** Low
 - **Bereich:** Functional
 - **Gefunden von:** QA Engineer
-- **Status:** Open
+- **Status:** Fixed
 
 ## Beschreibung
 `CopyButton.tsx` verwendet `setTimeout(() => setCopied(false), 2000)` ohne Cleanup. Wenn die Komponente innerhalb von 2 Sekunden nach einem Klick unmounted wird (z.B. Nutzer navigiert weg), versucht der Timeout `setCopied(false)` auf einem bereits unmounted Component aufzurufen. In React 18+ führt das nicht mehr zu einem Fehler, aber es ist ein unaufgeräumtes Timeout im Browser, das unnötig Ressourcen belegt.
@@ -39,3 +39,6 @@ Timeout läuft weiter; `setCopied` wird auf unmounted Component aufgerufen.
 
 ## Priority
 Nice-to-have
+
+## Fix (2026-03-28)
+useRef für setTimeout + useEffect cleanup in CopyButton.tsx implementiert.

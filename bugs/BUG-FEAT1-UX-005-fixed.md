@@ -5,7 +5,7 @@
 - **Bereich:** Copy | Flow
 - **Gefunden von:** UX Reviewer
 - **Persona:** Mia (Moderator)
-- **Status:** Open
+- **Status:** Fixed
 
 ## Beschreibung
 Das Label des Smart-Input-Feldes in `LandingPage.tsx` (Zeile 143) lautet:
@@ -46,3 +46,6 @@ Alternativ: zweizeiliger Placeholder oder ein dezenter Helper-Text unterhalb des
 
 ## Priority
 Fix before release
+
+## Fix (2026-03-28)
+Placeholder auf '4-stellige Nummer oder Moderatoren-URL' geändert. Helper-Text unterhalb des Input-Felds erklärt beide Eingabemodi.

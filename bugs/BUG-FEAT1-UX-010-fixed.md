@@ -4,7 +4,7 @@
 - **Severity:** Medium
 - **Bereich:** UX | Feedback
 - **Gefunden von:** UX Reviewer
-- **Status:** Open
+- **Status:** Fixed
 
 ## Problem
 
@@ -36,3 +36,6 @@ Der ConnectionIndicator allein reicht nicht – er ist semantisch zu weit vom Ti
 
 ## Priority
 Fix before release
+
+## Fix (2026-03-28)
+ParticipantView: displayMs=null während connecting+kein timerState. TimerDisplay zeigt '--:--' für null (statt '00:00'). aria-label wechselt auf 'Verbindung wird aufgebaut'.

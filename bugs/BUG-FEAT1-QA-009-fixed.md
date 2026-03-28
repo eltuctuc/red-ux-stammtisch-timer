@@ -4,7 +4,7 @@
 - **Severity:** Medium
 - **Bereich:** Functional
 - **Gefunden von:** QA Engineer
-- **Status:** Open
+- **Status:** Fixed
 
 ## Steps to Reproduce
 1. Jemand ruft manuell die URL `/session/1234?mod=wrong-token-but-no-mod-param` auf – wait, das ist ModeratorView.
@@ -39,3 +39,6 @@ Für Teilnehmer existiert nur `SESSION_NOT_FOUND` als erwarteter Fehlercode (da 
 
 ## Priority
 Fix before release
+
+## Fix (2026-03-28)
+ParticipantView unterscheidet jetzt SESSION_NOT_FOUND ('Session nicht gefunden') von anderen Fehlercodes ('Verbindungsfehler').

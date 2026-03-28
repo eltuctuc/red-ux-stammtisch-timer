@@ -4,7 +4,7 @@
 - **Severity:** Medium
 - **Bereich:** Functional
 - **Gefunden von:** QA Engineer
-- **Status:** Open
+- **Status:** Fixed
 
 ## Beschreibung
 Die Feature-Spec beschreibt den Reconnect-Flow als: "Eingabe einer gültigen Moderatoren-URL (oder des Secret-Tokens) unter 'Bestehende Session fortsetzen' öffnet die Moderatoren-Ansicht."
@@ -44,3 +44,6 @@ Entweder: (a) AC anpassen und Token-Only aus der Spec streichen (wenn dies eine 
 
 ## Priority
 Fix before release
+
+## Fix (2026-03-28)
+Error message in LandingPage.tsx aktualisiert: explizit 'vollständige Moderatoren-URL' statt nur 'Moderatoren-URL'. Placeholder auf '4-stellige Nummer oder Moderatoren-URL' geändert. Helper-Text ergänzt.

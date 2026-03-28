@@ -4,7 +4,7 @@
 - **Severity:** Medium
 - **Bereich:** A11y
 - **Gefunden von:** UX Reviewer
-- **Status:** Open
+- **Status:** Fixed
 
 ## Problem
 
@@ -28,3 +28,6 @@ Das `div#share-section-content` immer im DOM belassen und stattdessen per `hidde
 
 ## Priority
 Fix before release
+
+## Fix (2026-03-28)
+aria-controls vom Toggle-Button entfernt. share-section-content-Div immer im DOM (hidden-Attribut + display:none statt conditional rendering). aria-expanded bleibt für Screen Reader erhalten.

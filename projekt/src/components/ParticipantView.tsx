@@ -14,7 +14,10 @@ export default function ParticipantView({ sessionId }: ParticipantViewProps) {
   });
 
   const status = timerState?.status ?? 'idle';
-  const displayMs = timerState?.displayRemainingMs ?? 0;
+  // Show loading placeholder while connecting and no state received yet
+  const displayMs = connectionStatus === 'connecting' && !timerState
+    ? null
+    : (timerState?.displayRemainingMs ?? 0);
   const isWarning = timerState?.isWarning ?? false;
 
   if (sessionExpired) {
@@ -55,6 +58,12 @@ export default function ParticipantView({ sessionId }: ParticipantViewProps) {
   }
 
   if (connectionError) {
+    const isNotFound = connectionError.code === 'SESSION_NOT_FOUND';
+    const title = isNotFound ? 'Session nicht gefunden.' : 'Verbindungsfehler.';
+    const description = isNotFound
+      ? 'Diese Session existiert nicht oder ist abgelaufen.'
+      : 'Die Verbindung konnte nicht hergestellt werden. Bitte lade die Seite neu.';
+
     return (
       <main
         style={{
@@ -72,11 +81,9 @@ export default function ParticipantView({ sessionId }: ParticipantViewProps) {
           role="alert"
           style={{ fontSize: '18px', fontWeight: 500, color: 'var(--color-text-primary)' }}
         >
-          Session nicht gefunden.
+          {title}
         </p>
-        <p style={{ color: 'var(--color-text-secondary)' }}>
-          Diese Session existiert nicht oder ist abgelaufen.
-        </p>
+        <p style={{ color: 'var(--color-text-secondary)' }}>{description}</p>
         <Link
           to="/"
           style={{

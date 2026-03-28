@@ -1,27 +1,29 @@
-import { useState, useId } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { generateSessionId, generateModToken, parseSmartInput } from '../lib/session';
+
+interface LocationState {
+  reconnectError?: string;
+  input?: string;
+}
 
 export default function LandingPage() {
   const navigate = useNavigate();
-  const [isStarting, setIsStarting] = useState(false);
-  const [inputValue, setInputValue] = useState('');
-  const [inputError, setInputError] = useState<string | null>(null);
-  const inputId = useId();
-  const errorId = useId();
+  const location = useLocation();
+  const locationState = (location.state ?? {}) as LocationState;
+
+  const [inputValue, setInputValue] = useState(locationState.input ?? '');
+  const [inputError, setInputError] = useState<string | null>(locationState.reconnectError ?? null);
+  const [primaryHovered, setPrimaryHovered] = useState(false);
+  const [submitHovered, setSubmitHovered] = useState(false);
 
   // Eingabe-Modus: numeric bei ≤4 Zeichen, text sonst
   const inputMode = inputValue.length <= 4 ? 'numeric' : 'text';
 
-  async function handleNewSession() {
-    setIsStarting(true);
-    try {
-      const sessionId = generateSessionId();
-      const modToken = generateModToken();
-      navigate(`/session/${sessionId}?mod=${modToken}`);
-    } finally {
-      setIsStarting(false);
-    }
+  function handleNewSession() {
+    const sessionId = generateSessionId();
+    const modToken = generateModToken();
+    navigate(`/session/${sessionId}?mod=${modToken}`);
   }
 
   function handleSmartInput(e: React.FormEvent) {
@@ -41,7 +43,7 @@ export default function LandingPage() {
       navigate(`/session/${result.sessionId}?mod=${result.token}`);
     } else {
       setInputError(
-        'Eingabe nicht erkannt. Bitte gib eine 4-stellige Session-Nummer oder die vollständige Moderatoren-URL ein.'
+        'Eingabe nicht erkannt. Bitte gib eine 4-stellige Session-Nummer oder deine vollständige Moderatoren-URL ein.'
       );
     }
   }
@@ -95,23 +97,23 @@ export default function LandingPage() {
           <button
             type="button"
             onClick={handleNewSession}
-            disabled={isStarting}
-            aria-busy={isStarting}
+            onMouseEnter={() => setPrimaryHovered(true)}
+            onMouseLeave={() => setPrimaryHovered(false)}
             style={{
               width: '100%',
               minHeight: '52px',
               borderRadius: 'var(--radius-md)',
               border: 'none',
-              background: isStarting ? 'var(--color-border)' : 'var(--color-accent)',
-              color: isStarting ? 'var(--color-text-secondary)' : 'white',
+              background: primaryHovered ? 'var(--color-accent-hover)' : 'var(--color-accent)',
+              color: 'white',
               fontFamily: 'var(--font-sans)',
               fontWeight: 600,
               fontSize: '16px',
-              cursor: isStarting ? 'not-allowed' : 'pointer',
+              cursor: 'pointer',
               transition: 'background var(--transition-fast)',
             }}
           >
-            {isStarting ? 'Wird gestartet...' : 'Neue Session starten'}
+            Neue Session starten
           </button>
         </section>
 
@@ -133,7 +135,7 @@ export default function LandingPage() {
           <form onSubmit={handleSmartInput} noValidate>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
               <label
-                htmlFor={inputId}
+                htmlFor="smart-input"
                 style={{
                   fontSize: '14px',
                   fontWeight: 500,
@@ -143,7 +145,7 @@ export default function LandingPage() {
                 Session-Nummer oder Moderatoren-Link
               </label>
               <input
-                id={inputId}
+                id="smart-input"
                 type="text"
                 inputMode={inputMode}
                 value={inputValue}
@@ -151,8 +153,8 @@ export default function LandingPage() {
                   setInputValue(e.target.value);
                   setInputError(null);
                 }}
-                placeholder="z.B. 4821"
-                aria-describedby={inputError ? errorId : undefined}
+                placeholder="4-stellige Nummer oder Moderatoren-URL"
+                aria-describedby={inputError ? 'smart-input-error' : 'smart-input-hint'}
                 aria-invalid={inputError ? 'true' : undefined}
                 style={{
                   width: '100%',
@@ -178,9 +180,9 @@ export default function LandingPage() {
                 }}
               />
 
-              {inputError && (
+              {inputError ? (
                 <p
-                  id={errorId}
+                  id="smart-input-error"
                   role="alert"
                   style={{
                     fontSize: '13px',
@@ -189,16 +191,28 @@ export default function LandingPage() {
                 >
                   {inputError}
                 </p>
+              ) : (
+                <p
+                  id="smart-input-hint"
+                  style={{
+                    fontSize: '13px',
+                    color: 'var(--color-text-secondary)',
+                  }}
+                >
+                  Als Teilnehmer: 4-stellige Nummer. Als Moderator: vollständige Moderatoren-URL.
+                </p>
               )}
 
               <button
                 type="submit"
+                onMouseEnter={() => setSubmitHovered(true)}
+                onMouseLeave={() => setSubmitHovered(false)}
                 style={{
                   width: '100%',
                   minHeight: '48px',
                   borderRadius: 'var(--radius-md)',
                   border: '1px solid var(--color-border)',
-                  background: 'var(--color-surface)',
+                  background: submitHovered ? 'var(--color-border)' : 'var(--color-surface)',
                   color: 'var(--color-text-primary)',
                   fontFamily: 'var(--font-sans)',
                   fontWeight: 500,

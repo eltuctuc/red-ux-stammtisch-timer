@@ -5,7 +5,7 @@
 - **Bereich:** A11y
 - **Gefunden von:** UX Reviewer
 - **Persona:** Beide
-- **Status:** Open
+- **Status:** Fixed
 
 ## Beschreibung
 Die globale CSS-Datei (`index.css`) setzt `border: none` und `background: none` auf allen `button`-Elementen,
@@ -40,3 +40,6 @@ Für den "Weiter"-Button einen hover-State per `onMouseEnter`/`onMouseLeave` ode
 
 ## Priority
 Fix before release
+
+## Fix (2026-03-28)
+button:focus-visible in index.css ergänzt (2px solid accent, offset 2px). Hover-States für 'Neue Session' (accent-hover) und 'Weiter'-Button (border-color) via onMouseEnter/Leave.

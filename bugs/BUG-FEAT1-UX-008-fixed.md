@@ -4,7 +4,7 @@
 - **Severity:** Low
 - **Bereich:** UX | Konsistenz
 - **Gefunden von:** UX Reviewer
-- **Status:** Open
+- **Status:** Fixed
 
 ## Problem
 
@@ -30,3 +30,6 @@ Die Unicode-Zeichen durch inline SVG ersetzen. Beispiel mit einem Lucide-ähnlic
 
 ## Priority
 Nice-to-have
+
+## Fix (2026-03-28)
+Unicode-Zeichen ⎘ und ✓ durch inline SVG (Lucide-Style Copy + Checkmark) ersetzt. Font-unabhängig, skaliert sauber auf allen Plattformen.

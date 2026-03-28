@@ -4,7 +4,7 @@
 - **Severity:** Medium
 - **Bereich:** A11y | UX
 - **Gefunden von:** UX Reviewer
-- **Status:** Open
+- **Status:** Fixed
 
 ## Problem
 
@@ -29,3 +29,6 @@ Entweder globalen `button:focus-visible`-Stil in `index.css` einführen (synchro
 
 ## Priority
 Fix before release
+
+## Fix (2026-03-28)
+ShareSection-Toggle: Hover-State via isHovered-State (bg wechselt zu --color-bg). Focus-visible durch globalen button:focus-visible in index.css abgedeckt (UX-002).

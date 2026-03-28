@@ -5,7 +5,7 @@ type TimerStatus = 'idle' | 'running' | 'paused' | 'expired';
 
 interface TimerDisplayProps {
   status: TimerStatus;
-  displayMs: number;
+  displayMs: number | null;
   isWarning: boolean;
 }
 
@@ -27,7 +27,7 @@ export default function TimerDisplay({ status, displayMs, isWarning }: TimerDisp
   const bg = isWarning ? 'var(--timer-bg-warning)' : bgMap[status];
   const color = isWarning ? 'var(--timer-text-warning)' : textMap[status];
 
-  const label = formatTime(displayMs);
+  const label = displayMs === null ? '--:--' : formatTime(displayMs);
 
   // Announce only meaningful state changes to screen readers
   const [announcement, setAnnouncement] = useState('');
@@ -74,7 +74,7 @@ export default function TimerDisplay({ status, displayMs, isWarning }: TimerDisp
 
       <time
         role="timer"
-        aria-label={`Verbleibende Zeit: ${label}`}
+        aria-label={displayMs === null ? 'Verbindung wird aufgebaut' : `Verbleibende Zeit: ${label}`}
         style={{
           fontVariantNumeric: 'tabular-nums',
           fontSize: 'clamp(4rem, 20vw, 10rem)',
