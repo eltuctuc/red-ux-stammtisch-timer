@@ -1,5 +1,6 @@
-import { useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { useCallback, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { generateSessionId, generateModToken } from '../lib/session';
 import { useTimerSession } from '../hooks/useTimerSession';
 import TimerDisplay from './TimerDisplay';
 import ConnectionIndicator from './ConnectionIndicator';
@@ -14,8 +15,18 @@ interface ModeratorViewProps {
 }
 
 export default function ModeratorView({ sessionId, modToken }: ModeratorViewProps) {
+  const navigate = useNavigate();
   const { timerState, connectionStatus, connectionError, sessionExpired, sendCommand } =
     useTimerSession({ sessionId, modToken });
+
+  // Auto-retry with new session ID on collision (room already owned by someone else)
+  useEffect(() => {
+    if (connectionError?.code === 'ROOM_EXISTS') {
+      const newSessionId = generateSessionId();
+      const newModToken = generateModToken();
+      navigate(`/session/${newSessionId}?mod=${newModToken}`, { replace: true });
+    }
+  }, [connectionError, navigate]);
 
   const handleSetDuration = useCallback(
     (ms: number) => {
@@ -83,12 +94,41 @@ export default function ModeratorView({ sessionId, modToken }: ModeratorViewProp
 
   if (connectionError?.code === 'INVALID_TOKEN') {
     return (
-      <div style={{ padding: 'var(--space-8)', textAlign: 'center' }}>
+      <main
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: '60vh',
+          gap: 'var(--space-4)',
+          padding: 'var(--space-4)',
+          textAlign: 'center',
+        }}
+      >
         <p role="alert" style={{ color: 'var(--color-danger)', fontWeight: 500 }}>
-          Ungultiger Moderatoren-Token. Bitte die Moderatoren-URL uberprufen.
+          Ungültiger Moderatoren-Token. Bitte die Moderatoren-URL überprüfen.
         </p>
-      </div>
+        <Link
+          to="/"
+          style={{
+            color: 'var(--color-accent)',
+            fontWeight: 500,
+            textDecoration: 'none',
+            padding: 'var(--space-2) var(--space-4)',
+            border: '1px solid var(--color-accent)',
+            borderRadius: 'var(--radius-md)',
+          }}
+        >
+          Zurück zur Startseite
+        </Link>
+      </main>
     );
+  }
+
+  // ROOM_EXISTS is handled by useEffect above (auto-redirect); show nothing while redirecting
+  if (connectionError?.code === 'ROOM_EXISTS') {
+    return null;
   }
 
   return (

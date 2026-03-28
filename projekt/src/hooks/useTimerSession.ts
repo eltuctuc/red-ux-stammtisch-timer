@@ -88,20 +88,19 @@ export function useTimerSession({
     };
   }, [serverState]);
 
-  // Sound + expire detection
+  // Sound on running → expired transition
   useEffect(() => {
     if (!serverState) return;
 
     const prev = prevStatusRef.current;
     const curr = serverState.status;
 
-    // Wenn displayRemainingMs auf 0 sinkt während status 'running' war → Sound
-    if (prev === 'running' && (curr === 'expired' || displayRemainingMs === 0)) {
+    if (prev === 'running' && curr === 'expired') {
       playExpireSound();
     }
 
     prevStatusRef.current = curr;
-  }, [serverState, displayRemainingMs]);
+  }, [serverState]);
 
   // WebSocket connection
   useEffect(() => {

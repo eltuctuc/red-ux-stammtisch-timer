@@ -41,7 +41,7 @@ export default function LandingPage() {
       navigate(`/session/${result.sessionId}?mod=${result.token}`);
     } else {
       setInputError(
-        'Eingabe nicht erkannt. Bitte gib eine 4-stellige Session-Nummer oder die vollstandige Moderatoren-URL ein.'
+        'Eingabe nicht erkannt. Bitte gib eine 4-stellige Session-Nummer oder die vollständige Moderatoren-URL ein.'
       );
     }
   }
@@ -86,7 +86,7 @@ export default function LandingPage() {
               color: 'var(--color-text-secondary)',
             }}
           >
-            Echtzeit-Timer fur Workshops und Meetings
+            Echtzeit-Timer für Workshops und Meetings
           </p>
         </header>
 

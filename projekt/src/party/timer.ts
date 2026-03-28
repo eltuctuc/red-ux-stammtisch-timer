@@ -7,6 +7,7 @@ interface SessionState {
   modToken: string | null;
   timer: TimerState;
   lastActivityAt: number;
+  alarmType: 'timer' | 'session';
 }
 
 function defaultTimerState(): TimerState {
@@ -28,6 +29,7 @@ export default class TimerServer implements Party.Server {
       modToken: null,
       timer: defaultTimerState(),
       lastActivityAt: Date.now(),
+      alarmType: 'session',
     };
   }
 
@@ -44,10 +46,15 @@ export default class TimerServer implements Party.Server {
         // Returning moderator with correct token
         this.modConnections.add(conn.id);
       } else {
-        // Invalid token – treat as participant, send error
-        conn.send(
-          JSON.stringify({ type: 'ERROR', code: 'INVALID_TOKEN' })
-        );
+        // Different token trying to claim an already-owned room
+        conn.send(JSON.stringify({ type: 'ERROR', code: 'ROOM_EXISTS' }));
+        return;
+      }
+    } else {
+      // Participant connecting – room must already be owned by a moderator
+      if (this.state.modToken === null) {
+        conn.send(JSON.stringify({ type: 'ERROR', code: 'SESSION_NOT_FOUND' }));
+        return;
       }
     }
 
@@ -102,8 +109,9 @@ export default class TimerServer implements Party.Server {
           startedAt: now,
         };
         this.state.lastActivityAt = now;
-        // Session expires 3 hours after last timer start
-        void this.room.storage.setAlarm(now + 3 * 60 * 60 * 1_000);
+        // Alarm fires when timer runs out
+        void this.room.storage.setAlarm(now + timer.remainingMs);
+        this.state.alarmType = 'timer';
         break;
       }
 
@@ -117,16 +125,23 @@ export default class TimerServer implements Party.Server {
           remainingMs: remaining,
           startedAt: null,
         };
+        // Switch to session-expiry alarm while paused
+        void this.room.storage.setAlarm(Date.now() + 3 * 60 * 60 * 1_000);
+        this.state.alarmType = 'session';
         break;
       }
 
       case 'RESUME': {
         if (timer.status !== 'paused') return;
+        const now = Date.now();
         this.state.timer = {
           ...timer,
           status: 'running',
-          startedAt: Date.now(),
+          startedAt: now,
         };
+        // Resume timer-expiry alarm for remaining time
+        void this.room.storage.setAlarm(now + timer.remainingMs);
+        this.state.alarmType = 'timer';
         break;
       }
 
@@ -137,6 +152,9 @@ export default class TimerServer implements Party.Server {
           remainingMs: timer.totalDurationMs,
           startedAt: null,
         };
+        // Back to session-expiry alarm
+        void this.room.storage.setAlarm(Date.now() + 3 * 60 * 60 * 1_000);
+        this.state.alarmType = 'session';
         break;
       }
 
@@ -151,11 +169,26 @@ export default class TimerServer implements Party.Server {
   }
 
   async onAlarm() {
-    // Session has been inactive for 3 hours – expire everything
-    this.room.broadcast(JSON.stringify({ type: 'SESSION_EXPIRED' }));
-    // Close all connections
-    for (const conn of this.room.getConnections()) {
-      conn.close();
+    if (this.state.alarmType === 'timer') {
+      // Timer has run out – broadcast expired state
+      this.state.timer = {
+        ...this.state.timer,
+        status: 'expired',
+        remainingMs: 0,
+        startedAt: null,
+      };
+      this.room.broadcast(
+        JSON.stringify({ type: 'STATE_UPDATE', timer: this.state.timer })
+      );
+      // Schedule session cleanup after 3 more hours of inactivity
+      void this.room.storage.setAlarm(Date.now() + 3 * 60 * 60 * 1_000);
+      this.state.alarmType = 'session';
+    } else {
+      // Session has been inactive for 3 hours – expire everything
+      this.room.broadcast(JSON.stringify({ type: 'SESSION_EXPIRED' }));
+      for (const conn of this.room.getConnections()) {
+        conn.close();
+      }
     }
   }
 }

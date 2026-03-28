@@ -15,9 +15,11 @@
 
   /* Timer states */
   --timer-bg-running: #F4F6F8;
+  --timer-bg-paused: #EBF5FF;
   --timer-bg-warning: #FFF8EC;
   --timer-bg-expired: #FFF1F1;
   --timer-text-running: #1C2B3A;
+  --timer-text-paused: #1D4ED8;
   --timer-text-warning: #8A5500;
   --timer-text-expired: #8A1F1F;
 

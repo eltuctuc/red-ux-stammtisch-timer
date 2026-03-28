@@ -1,0 +1,42 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cp -n ~/.claude/templates/red-create-prototyp-project/commands/workflow.md .claude/commands/)",
+      "Bash(cp -n ~/.claude/templates/red-create-prototyp-project/commands/sparring.md .claude/commands/)",
+      "Bash(cp -n ~/.claude/templates/red-create-prototyp-project/commands/dev-setup.md .claude/commands/)",
+      "Bash(cp -n ~/.claude/templates/red-create-prototyp-project/commands/user-research.md .claude/commands/)",
+      "Bash(cp -n ~/.claude/templates/red-create-prototyp-project/commands/requirements.md .claude/commands/)",
+      "Bash(curl -s https://api.github.com/repos/partykit/partykit)",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(f''''Stars: {d.get\\(stargazers_count\\)}, Forks: {d.get\\(forks_count\\)}, Last push: {d.get\\(pushed_at\\)}, Open issues: {d.get\\(open_issues_count\\)}, Description: {d.get\\(description\\)}''''\\)\")",
+      "WebSearch",
+      "WebFetch(domain:ably.com)",
+      "Bash(npm create:*)",
+      "Bash(npm install:*)",
+      "Bash(git branch:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git tag:*)",
+      "Bash(gh auth:*)",
+      "Bash(gh repo:*)",
+      "Bash(git push:*)",
+      "Bash(python3 /Users/enricoreinsdorf/.claude/skills/ui-ux-pro-max/scripts/search.py \"workshop timer productivity tool minimal clean\" --design-system -f markdown)",
+      "Bash(git -C /Users/enricoreinsdorf/Projekte/ux-stammtisch_002 ls-files projekt/src/)",
+      "Bash(git -C /Users/enricoreinsdorf/Projekte/ux-stammtisch_002 log --oneline -10)",
+      "Bash(git -C /Users/enricoreinsdorf/Projekte/ux-stammtisch_002 add features/FEAT-1-session-management.md features/FEAT-2-timer.md)",
+      "Bash(git -C:*)",
+      "Bash(git -C /Users/enricoreinsdorf/Projekte/ux-stammtisch_002 push)",
+      "Bash(npx tsc:*)",
+      "Bash(npm run:*)",
+      "Bash(features/FEAT-2-timer.md:*)",
+      "Bash(/Users/enricoreinsdorf/Projekte/ux-stammtisch_002/features/FEAT-1-session-management.md:*)",
+      "Bash(/Users/enricoreinsdorf/Projekte/ux-stammtisch_002/features/FEAT-2-timer.md:*)"
+    ]
+  },
+  "disabledMcpjsonServers": [
+    "neon",
+    "supabase",
+    "vercel",
+    "notion",
+    "figma"
+  ]
+}

@@ -85,7 +85,7 @@ export default function ShareSection({ sessionId, modToken, initiallyOpen = fals
           {/* Teilnehmer-URL */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
             <p style={{ fontSize: '13px', color: 'var(--color-text-secondary)', fontWeight: 500 }}>
-              Link fur Teilnehmer
+              Link für Teilnehmer
             </p>
             <code
               style={{

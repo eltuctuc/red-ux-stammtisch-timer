@@ -48,7 +48,7 @@ export default function ParticipantView({ sessionId }: ParticipantViewProps) {
             borderRadius: 'var(--radius-md)',
           }}
         >
-          Zuruck zur Startseite
+          Zurück zur Startseite
         </Link>
       </main>
     );
@@ -88,7 +88,7 @@ export default function ParticipantView({ sessionId }: ParticipantViewProps) {
             borderRadius: 'var(--radius-md)',
           }}
         >
-          Zuruck zur Startseite
+          Zurück zur Startseite
         </Link>
       </main>
     );

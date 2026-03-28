@@ -26,7 +26,7 @@ export default function SessionPage() {
           textAlign: 'center',
         }}
       >
-        <p style={{ fontSize: '18px', fontWeight: 500 }}>Ungultige Session-Nummer.</p>
+        <p style={{ fontSize: '18px', fontWeight: 500 }}>Ungültige Session-Nummer.</p>
         <Link
           to="/"
           style={{
@@ -35,7 +35,7 @@ export default function SessionPage() {
             textDecoration: 'none',
           }}
         >
-          Zuruck zur Startseite
+          Zurück zur Startseite
         </Link>
       </main>
     );
