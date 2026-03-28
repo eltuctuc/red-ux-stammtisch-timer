@@ -23,7 +23,8 @@ export default function LandingPage() {
   function handleNewSession() {
     const sessionId = generateSessionId();
     const modToken = generateModToken();
-    navigate(`/session/${sessionId}?mod=${modToken}`);
+    // BUG-FEAT1-QA-014: ?new=1 tells the server this is a creation attempt (not a reconnect)
+    navigate(`/session/${sessionId}?mod=${modToken}&new=1`);
   }
 
   function handleSmartInput(e: React.FormEvent) {

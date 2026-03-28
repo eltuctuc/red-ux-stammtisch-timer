@@ -4,21 +4,21 @@ interface ConnectionIndicatorProps {
   status: ConnectionStatus;
 }
 
-const messages: Record<Exclude<ConnectionStatus, 'connected'>, string> = {
+const nonErrorMessages: Record<'connecting' | 'disconnected', string> = {
   connecting: 'Verbindung wird hergestellt...',
   disconnected: 'Verbindung unterbrochen – wird neu verbunden...',
-  error: 'Verbindungsfehler – bitte Seite neu laden',
 };
 
 export default function ConnectionIndicator({ status }: ConnectionIndicatorProps) {
   if (status === 'connected') return null;
 
-  const message = messages[status];
+  const isError = status === 'error';
 
   return (
     <div
-      role="status"
-      aria-live="polite"
+      // BUG-FEAT1-UX-018: error state uses role="alert" + aria-live="assertive" for immediate announcement
+      role={isError ? 'alert' : 'status'}
+      aria-live={isError ? 'assertive' : 'polite'}
       style={{
         display: 'flex',
         alignItems: 'center',
@@ -38,11 +38,35 @@ export default function ConnectionIndicator({ status }: ConnectionIndicatorProps
           width: '6px',
           height: '6px',
           borderRadius: '50%',
-          background: status === 'error' ? 'var(--color-danger)' : 'var(--color-accent)',
-          animation: status !== 'error' ? 'pulse 1.4s ease-in-out infinite' : 'none',
+          flexShrink: 0,
+          background: isError ? 'var(--color-danger)' : 'var(--color-accent)',
+          animation: !isError ? 'pulse 1.4s ease-in-out infinite' : 'none',
         }}
       />
-      {message}
+      {isError ? (
+        <>
+          Verbindungsfehler –{' '}
+          <button
+            type="button"
+            onClick={() => window.location.reload()}
+            style={{
+              background: 'none',
+              border: 'none',
+              padding: 0,
+              color: 'var(--color-accent)',
+              fontSize: 'inherit',
+              fontFamily: 'inherit',
+              fontWeight: 500,
+              cursor: 'pointer',
+              textDecoration: 'underline',
+            }}
+          >
+            Seite neu laden
+          </button>
+        </>
+      ) : (
+        nonErrorMessages[status]
+      )}
       <style>{`
         @keyframes pulse {
           0%, 100% { opacity: 1; }

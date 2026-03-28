@@ -5,7 +5,8 @@
 - **Bereich:** UX | Feedback
 - **Gefunden von:** UX Reviewer
 - **Persona:** Mia (Moderator)
-- **Status:** Open
+- **Status:** Fixed — 2026-03-28
+- **Fix:** `CopyButton.tsx` now renders a wrapper `<div>` containing the button + an optional `<p role="alert">` below it. Error text is no longer inside the button, so button height remains constant (44px) in all states. No layout shift in ShareSection.
 
 ## Beschreibung
 

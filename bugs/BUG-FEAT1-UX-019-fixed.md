@@ -5,7 +5,8 @@
 - **Bereich:** UX | Flow | Feedback
 - **Gefunden von:** UX Reviewer
 - **Persona:** Mia (Moderator)
-- **Status:** Open
+- **Status:** Fixed — 2026-03-28
+- **Fix:** In `ModeratorView.tsx`, when ROOM_EXISTS retry exhaustion (3 tries) navigates to `/`, it now passes `state: { reconnectError: 'Konnte keine freie Session erstellen. Bitte versuche es erneut.' }`. `LandingPage.tsx` already renders `locationState.reconnectError` as inline error — no additional changes needed there.
 
 ## Beschreibung
 

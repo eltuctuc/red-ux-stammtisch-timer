@@ -44,6 +44,8 @@ export default class TimerServer implements Party.Server {
 
     const url = new URL(ctx.request.url);
     const tokenParam = url.searchParams.get('mod');
+    // BUG-FEAT1-QA-014: distinguish new-session creation from reconnect
+    const isNewSession = url.searchParams.get('new') === '1';
 
     if (tokenParam) {
       if (this.state.modToken === null) {
@@ -56,15 +58,22 @@ export default class TimerServer implements Party.Server {
       } else if (tokenParam === this.state.modToken) {
         // Returning moderator with correct token
         this.modConnections.add(conn.id);
+      } else if (isNewSession) {
+        // BUG-FEAT1-QA-014: ID collision – room already owned, client should retry with new ID
+        conn.send(JSON.stringify({ type: 'ERROR', code: 'ROOM_EXISTS' }));
+        conn.close(); // BUG-FEAT1-QA-016
+        return;
       } else {
-        // Moderator with wrong token – invalid reconnect attempt
+        // Invalid token on reconnect attempt
         conn.send(JSON.stringify({ type: 'ERROR', code: 'INVALID_TOKEN' }));
+        conn.close(); // BUG-FEAT1-QA-016
         return;
       }
     } else {
       // Participant connecting – room must already be owned by a moderator
       if (this.state.modToken === null) {
         conn.send(JSON.stringify({ type: 'ERROR', code: 'SESSION_NOT_FOUND' }));
+        conn.close(); // BUG-FEAT1-QA-016
         return;
       }
     }

@@ -58,50 +58,57 @@ export default function CopyButton({ value, label }: CopyButtonProps) {
     }
   }
 
-  const bg = copyError
-    ? 'var(--color-danger)'
-    : copied
-    ? 'var(--color-success)'
-    : 'var(--color-surface)';
-  const color = copied || copyError ? 'white' : 'var(--color-text-primary)';
-  const currentLabel = copyError
-    ? 'Nicht kopiert – bitte manuell kopieren'
-    : copied
-    ? 'Kopiert!'
-    : label;
+  const bg = copied ? 'var(--color-success)' : 'var(--color-surface)';
+  const color = copied ? 'white' : 'var(--color-text-primary)';
+  const currentLabel = copied ? 'Kopiert!' : label;
   const ariaLabel = copied
     ? 'In Zwischenablage kopiert'
     : copyError
     ? 'Kopieren fehlgeschlagen'
     : label;
 
+  // BUG-FEAT1-UX-017: error text rendered below button (not inside) to prevent layout shift
   return (
-    <button
-      type="button"
-      onClick={handleClick}
-      aria-label={ariaLabel}
-      style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: 'var(--space-2)',
-        minHeight: '44px',
-        padding: '0 var(--space-4)',
-        borderRadius: 'var(--radius-md)',
-        border: '1px solid var(--color-border)',
-        background: bg,
-        color: color,
-        fontSize: '14px',
-        fontWeight: 500,
-        cursor: 'pointer',
-        transition: 'background var(--transition-fast), color var(--transition-fast)',
-        whiteSpace: copyError ? 'normal' : 'nowrap',
-        overflow: copyError ? 'visible' : 'hidden',
-        textOverflow: copyError ? 'unset' : 'ellipsis',
-        maxWidth: '100%',
-      }}
-    >
-      {copied ? <IconCheck /> : <IconCopy />}
-      {currentLabel}
-    </button>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-1)' }}>
+      <button
+        type="button"
+        onClick={handleClick}
+        aria-label={ariaLabel}
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: 'var(--space-2)',
+          minHeight: '44px',
+          padding: '0 var(--space-4)',
+          borderRadius: 'var(--radius-md)',
+          border: '1px solid var(--color-border)',
+          background: bg,
+          color: color,
+          fontSize: '14px',
+          fontWeight: 500,
+          cursor: 'pointer',
+          transition: 'background var(--transition-fast), color var(--transition-fast)',
+          whiteSpace: 'nowrap',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          maxWidth: '100%',
+        }}
+      >
+        {copied ? <IconCheck /> : <IconCopy />}
+        {currentLabel}
+      </button>
+      {copyError && (
+        <p
+          role="alert"
+          style={{
+            margin: 0,
+            fontSize: '13px',
+            color: 'var(--color-danger)',
+          }}
+        >
+          Nicht kopiert – bitte manuell kopieren
+        </p>
+      )}
+    </div>
   );
 }

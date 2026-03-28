@@ -37,9 +37,11 @@ function playExpireSound() {
 export function useTimerSession({
   sessionId,
   modToken,
+  isNew,
 }: {
   sessionId: string;
   modToken?: string;
+  isNew?: boolean;
 }): TimerSessionState {
   const [serverState, setServerState] = useState<TimerState | null>(null);
   const [displayRemainingMs, setDisplayRemainingMs] = useState(0);
@@ -108,6 +110,10 @@ export function useTimerSession({
     if (modToken) {
       query.mod = modToken;
     }
+    // BUG-FEAT1-QA-014: signal new-session intent so server can distinguish collision from bad reconnect
+    if (isNew) {
+      query.new = '1';
+    }
 
     const socket = new PartySocket({
       host: PARTYKIT_HOST,
@@ -156,7 +162,7 @@ export function useTimerSession({
       socket.close();
       socketRef.current = null;
     };
-  }, [sessionId, modToken]);
+  }, [sessionId, modToken, isNew]);
 
   const sendCommand = useCallback((cmd: object) => {
     if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {

@@ -4,7 +4,8 @@
 - **Severity:** Medium
 - **Bereich:** Functional
 - **Gefunden von:** QA Engineer
-- **Status:** Open
+- **Status:** Fixed — 2026-03-28
+- **Fix:** Added `conn.close()` in `timer.ts` after sending `ROOM_EXISTS`, `INVALID_TOKEN`, and `SESSION_NOT_FOUND` (participant). Server now immediately closes the connection after sending any error response.
 
 ## Beschreibung
 

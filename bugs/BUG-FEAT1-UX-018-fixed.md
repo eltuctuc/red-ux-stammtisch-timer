@@ -5,7 +5,8 @@
 - **Bereich:** UX | Feedback | A11y
 - **Gefunden von:** UX Reviewer
 - **Persona:** Mia (Moderator) | Lea (Teilnehmer) | Beide
-- **Status:** Open
+- **Status:** Fixed — 2026-03-28
+- **Fix:** `ConnectionIndicator.tsx` now uses `role="alert"` + `aria-live="assertive"` in error state (vs. `role="status"` / `aria-live="polite"` for connecting/disconnected). Error state displays "Verbindungsfehler – Seite neu laden" where "Seite neu laden" is a clickable `<button>` that calls `window.location.reload()`.
 
 ## Beschreibung
 

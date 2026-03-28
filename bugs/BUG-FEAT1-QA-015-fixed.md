@@ -4,7 +4,8 @@
 - **Severity:** High
 - **Bereich:** Functional
 - **Gefunden von:** QA Engineer
-- **Status:** Open
+- **Status:** Fixed — 2026-03-28
+- **Fix:** Moved INVALID_TOKEN `useEffect` before the `if (sessionExpired) return` block in `ModeratorView.tsx`. Both `useEffect` hooks (ROOM_EXISTS + INVALID_TOKEN) are now declared unconditionally before all conditional returns, compliant with React Rules of Hooks.
 
 ## Beschreibung
 

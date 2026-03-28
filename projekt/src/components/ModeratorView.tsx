@@ -12,15 +12,17 @@ import ShareSection from './ShareSection';
 interface ModeratorViewProps {
   sessionId: string;
   modToken: string;
+  isNew?: boolean; // BUG-FEAT1-QA-014
 }
 
-export default function ModeratorView({ sessionId, modToken }: ModeratorViewProps) {
+export default function ModeratorView({ sessionId, modToken, isNew }: ModeratorViewProps) {
   const navigate = useNavigate();
   const { timerState, connectionStatus, connectionError, sessionExpired, sendCommand } =
-    useTimerSession({ sessionId, modToken });
+    useTimerSession({ sessionId, modToken, isNew }); // BUG-FEAT1-QA-014
 
   const roomExistsRetryCount = useRef<number>(0);
 
+  // BUG-FEAT1-QA-015: All useEffects BEFORE any conditional returns
   // Auto-retry with new session ID on collision (room already owned by someone else)
   // Max 3 retries to prevent infinite redirect loop (BUG-FEAT1-QA-006)
   useEffect(() => {
@@ -29,12 +31,33 @@ export default function ModeratorView({ sessionId, modToken }: ModeratorViewProp
         roomExistsRetryCount.current += 1;
         const newSessionId = generateSessionId();
         const newModToken = generateModToken();
-        navigate(`/session/${newSessionId}?mod=${newModToken}`, { replace: true });
+        // BUG-FEAT1-QA-014: keep ?new=1 on retry so server still treats it as creation
+        navigate(`/session/${newSessionId}?mod=${newModToken}&new=1`, { replace: true });
       } else {
-        navigate('/', { replace: true });
+        // BUG-FEAT1-UX-019: show error instead of silently navigating away
+        navigate('/', {
+          replace: true,
+          state: { reconnectError: 'Konnte keine freie Session erstellen. Bitte versuche es erneut.' },
+        });
       }
     }
   }, [connectionError, navigate]);
+
+  // BUG-FEAT1-QA-015: moved before conditional return (was after if (sessionExpired) block)
+  // INVALID_TOKEN: redirect back to LandingPage with inline error (spec: error stays on landing page)
+  useEffect(() => {
+    if (connectionError?.code === 'INVALID_TOKEN') {
+      const origin = typeof window !== 'undefined' ? window.location.origin : '';
+      const originalInput = `${origin}/session/${sessionId}?mod=${modToken}`;
+      navigate('/', {
+        replace: true,
+        state: {
+          reconnectError: 'Session nicht gefunden oder abgelaufen. Bitte überprüfe deine Moderatoren-URL.',
+          input: originalInput,
+        },
+      });
+    }
+  }, [connectionError, navigate, sessionId, modToken]);
 
   const handleSetDuration = useCallback(
     (ms: number) => {
@@ -102,22 +125,7 @@ export default function ModeratorView({ sessionId, modToken }: ModeratorViewProp
     );
   }
 
-  // INVALID_TOKEN: redirect back to LandingPage with inline error (spec: error stays on landing page)
-  useEffect(() => {
-    if (connectionError?.code === 'INVALID_TOKEN') {
-      const origin = typeof window !== 'undefined' ? window.location.origin : '';
-      const originalInput = `${origin}/session/${sessionId}?mod=${modToken}`;
-      navigate('/', {
-        replace: true,
-        state: {
-          reconnectError: 'Session nicht gefunden oder abgelaufen. Bitte überprüfe deine Moderatoren-URL.',
-          input: originalInput,
-        },
-      });
-    }
-  }, [connectionError, navigate, sessionId, modToken]);
-
-  // ROOM_EXISTS is handled by useEffect above (auto-redirect); show nothing while redirecting
+  // ROOM_EXISTS and INVALID_TOKEN are handled by useEffects above (auto-redirect)
   if (connectionError?.code === 'ROOM_EXISTS') {
     return null;
   }

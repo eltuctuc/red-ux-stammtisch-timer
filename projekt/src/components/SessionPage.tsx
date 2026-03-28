@@ -11,6 +11,8 @@ export default function SessionPage() {
   const { id } = useParams<{ id: string }>();
   const [searchParams] = useSearchParams();
   const modToken = searchParams.get('mod') ?? undefined;
+  // BUG-FEAT1-QA-014: pass new-session flag to ModeratorView
+  const isNew = searchParams.get('new') === '1';
 
   if (!id || !/^\d{4}$/.test(id)) {
     return (
@@ -42,7 +44,7 @@ export default function SessionPage() {
   }
 
   if (modToken) {
-    return <ModeratorView sessionId={id} modToken={modToken} />;
+    return <ModeratorView sessionId={id} modToken={modToken} isNew={isNew} />;
   }
 
   return <ParticipantView sessionId={id} />;

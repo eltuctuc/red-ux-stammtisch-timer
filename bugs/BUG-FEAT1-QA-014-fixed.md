@@ -4,7 +4,8 @@
 - **Severity:** High
 - **Bereich:** Functional
 - **Gefunden von:** QA Engineer
-- **Status:** Open
+- **Status:** Fixed — 2026-03-28
+- **Fix:** Added `?new=1` URL parameter to distinguish new-session creation from reconnect. `timer.ts` checks `isNewSession` flag: if `new=1` AND room already has a different token → sends `ROOM_EXISTS`; without `new=1` → sends `INVALID_TOKEN`. `LandingPage.tsx` adds `&new=1` on new session creation. `SessionPage.tsx` reads and passes `isNew` to `ModeratorView`. `ModeratorView` and `useTimerSession` propagate `isNew` to the WebSocket query. Retry navigate also carries `&new=1`.
 
 ## Beschreibung
 
