@@ -354,3 +354,58 @@ Optional für Sound:
 
 ### Offene Punkte / Tech-Debt
 - Keine
+
+---
+
+## 5. QA Ergebnisse
+*Ausgefüllt von: /qa-engineer — 2026-03-28*
+
+### Acceptance Criteria Status
+- [x] Fünf Preset-Buttons ✅
+- [x] Individuelle Zeiteingabe ✅
+- [x] Timer startet nicht automatisch ✅
+- [x] Moderator kann starten ✅
+- [x] Moderator kann pausieren/fortsetzen ✅
+- [x] Moderator kann zurücksetzen ✅
+- [ ] Warning bei ≤ 20% – falsch bei Pause ❌ → BUG-FEAT2-QA-003
+- [ ] Expired-Zustand bei 00:00 – Server setzt nie 'expired' ❌ → BUG-FEAT2-QA-002 (Critical)
+- [ ] Sound für alle Clients – Race Condition ❌ → BUG-FEAT2-QA-001
+- [x] Echtzeit-Sync – Architektur korrekt ✅ (beeinträchtigt durch QA-002)
+- [x] Teilnehmer sehen keine Steuerungselemente ✅
+- [x] MM:SS-Format ✅
+
+### Security-Check
+- Mod-Kommandos nur nach Token-Validierung ausgeführt ✅
+- Server-seitiger durationMs-Clamp implementiert ✅
+- START ohne gesetzte Dauer möglich → BUG-FEAT2-QA-006
+
+### A11y-Check
+- `aria-live="polite"` auf Timer – Screenreader-Problem → BUG-FEAT2-UX-002
+- `aria-invalid` auf falschen Feldern → BUG-FEAT2-UX-003
+- `aria-controls` zeigt ins Leere → BUG-FEAT2-UX-006
+
+### Offene Bugs
+- BUG-FEAT2-QA-001 – Sound-Trigger Race Condition (High)
+- BUG-FEAT2-QA-002 – Server setzt Status nie auf 'expired' (Critical)
+- BUG-FEAT2-QA-003 – isWarning true auch bei pausiertem Timer (Medium)
+- BUG-FEAT2-QA-004 – CustomTimeInput Dead Code (Medium)
+- BUG-FEAT2-QA-005 – ArrayBuffer crasht JSON.parse (Medium)
+- BUG-FEAT2-QA-006 – START ohne totalDurationMs-Check (Medium)
+- BUG-FEAT2-QA-007 – AudioContext nicht geschlossen (Low)
+- BUG-FEAT2-QA-008 – ShareSection öffnet sich bei jedem Reload (Low)
+- BUG-FEAT2-UX-001 – Paused-Zustand visuell = Running (High)
+- BUG-FEAT2-UX-002 – aria-live auf tickendem Timer (High)
+- BUG-FEAT2-UX-003 – Beide Felder als aria-invalid (Medium)
+- BUG-FEAT2-UX-004 – Idle zeigt "00:00" (Medium)
+- BUG-FEAT2-UX-005 – Deaktivierte Presets ohne Erklärung (Low)
+- BUG-FEAT2-UX-006 – aria-controls zeigt ins Leere (Medium)
+- BUG-FEAT2-UX-007 – Unicode ⎘ statt SVG-Icon (Low)
+- BUG-FEAT2-UX-008 – Warning-State Kontrast ~4.6:1 (Medium)
+- BUG-FEAT2-UX-009 – Expired + Starten-Button gleichzeitig (Medium)
+
+### Summary
+- ✅ 7 Acceptance Criteria passed
+- ❌ 17 Bugs (1 Critical, 4 High, 8 Medium, 4 Low)
+
+### Production-Ready
+❌ NOT Ready – 1 Critical + 4 High Bugs offen

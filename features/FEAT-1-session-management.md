@@ -307,3 +307,52 @@ Kein REST-Backend. Alle Kommunikation über WebSocket (PartyKit).
 
 ### Offene Punkte / Tech-Debt
 - Keine
+
+---
+
+## 5. QA Ergebnisse
+*Ausgefüllt von: /qa-engineer — 2026-03-28*
+
+### Acceptance Criteria Status
+- [x] Haupt-URL zeigt zwei Aktionen ✅
+- [x] Klick auf "Neue Session starten" erstellt Session ✅
+- [x] Moderatoren-URL Reconnect-Flow ✅ (partiell)
+- [x] Session-Nummer 4 Ziffern ✅
+- [x] Moderatoren-URL mit `?mod=<token>` ✅
+- [x] Copy-Buttons mit "Kopiert!"-Bestätigung ✅
+- [x] Teilnehmer-URL Format `/session/<nummer>` ✅
+- [x] Moderatoren-URL zeigt Steuerungsansicht ✅
+- [x] Teilnehmer-URL zeigt read-only Ansicht ✅
+- [x] Eingabefeld für Session-Nummern ✅
+- [ ] Fehlermeldung "Session nicht gefunden" ❌ → BUG-FEAT1-QA-002
+- [x] Session verfällt nach 3h ✅
+
+### Security-Check
+- Token-Validierung via modConnections-Set korrekt implementiert
+- Input-Validierung für Session-ID und durationMs vorhanden
+- XSS: keine innerHTML-Nutzung, React-Rendering überall
+- modToken in WS-URL sichtbar – dokumentierte, bewusste Entscheidung → BUG-FEAT1-QA-003 (Low)
+
+### A11y-Check
+- Fehlende Fokus-/Hover-States → BUG-FEAT1-UX-002
+- Placeholder erklärt nur Teilnehmer-Flow → BUG-FEAT1-UX-005
+
+### Offene Bugs
+- BUG-FEAT1-QA-001 – Session-Kollisions-Handling fehlt (High)
+- BUG-FEAT1-QA-002 – SESSION_NOT_FOUND nie gesendet (High)
+- BUG-FEAT1-QA-003 – modToken in WS-URL exponiert (Low)
+- BUG-FEAT1-QA-004 – Token-Only-Eingabe widerspricht AC-Text (Medium)
+- BUG-FEAT1-QA-005 – CopyButton setTimeout ohne Cleanup (Low)
+- BUG-FEAT1-UX-001 – Fehlende Umlaute in UI-Texten (High)
+- BUG-FEAT1-UX-002 – Keine Fokus-/Hover-States (Medium)
+- BUG-FEAT1-UX-003 – INVALID_TOKEN ohne Escape-Weg (High)
+- BUG-FEAT1-UX-004 – CopyButton Silent Fail (Medium)
+- BUG-FEAT1-UX-005 – Placeholder nur für Teilnehmer erklärt (Medium)
+- BUG-FEAT1-UX-006 – Moderatoren-URL truncated (Low)
+
+### Summary
+- ✅ 10 Acceptance Criteria passed
+- ❌ 11 Bugs (0 Critical, 3 High, 4 Medium, 4 Low)
+
+### Production-Ready
+❌ NOT Ready – High Bugs offen (QA-001, QA-002, UX-001, UX-003)
