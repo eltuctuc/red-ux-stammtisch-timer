@@ -385,16 +385,16 @@ Optional für Sound:
 - `aria-controls` zeigt ins Leere → BUG-FEAT2-UX-006
 
 ### Offene Bugs
-- BUG-FEAT2-QA-001 – Sound-Trigger Race Condition (High)
-- BUG-FEAT2-QA-002 – Server setzt Status nie auf 'expired' (Critical)
+- ~~BUG-FEAT2-QA-001~~ – Sound-Trigger Race Condition (High) → **Fixed**
+- ~~BUG-FEAT2-QA-002~~ – Server setzt Status nie auf 'expired' (Critical) → **Fixed**
 - BUG-FEAT2-QA-003 – isWarning true auch bei pausiertem Timer (Medium)
 - BUG-FEAT2-QA-004 – CustomTimeInput Dead Code (Medium)
 - BUG-FEAT2-QA-005 – ArrayBuffer crasht JSON.parse (Medium)
 - BUG-FEAT2-QA-006 – START ohne totalDurationMs-Check (Medium)
 - BUG-FEAT2-QA-007 – AudioContext nicht geschlossen (Low)
 - BUG-FEAT2-QA-008 – ShareSection öffnet sich bei jedem Reload (Low)
-- BUG-FEAT2-UX-001 – Paused-Zustand visuell = Running (High)
-- BUG-FEAT2-UX-002 – aria-live auf tickendem Timer (High)
+- ~~BUG-FEAT2-UX-001~~ – Paused-Zustand visuell = Running (High) → **Fixed**
+- ~~BUG-FEAT2-UX-002~~ – aria-live auf tickendem Timer (High) → **Fixed**
 - BUG-FEAT2-UX-003 – Beide Felder als aria-invalid (Medium)
 - BUG-FEAT2-UX-004 – Idle zeigt "00:00" (Medium)
 - BUG-FEAT2-UX-005 – Deaktivierte Presets ohne Erklärung (Low)
@@ -405,7 +405,8 @@ Optional für Sound:
 
 ### Summary
 - ✅ 7 Acceptance Criteria passed
-- ❌ 17 Bugs (1 Critical, 4 High, 8 Medium, 4 Low)
+- ✅ 1 Critical + 3 High Bugs Fixed
+- ❌ 13 Bugs remaining (0 Critical, 0 High, 8 Medium, 5 Low)
 
 ### Production-Ready
-❌ NOT Ready – 1 Critical + 4 High Bugs offen
+⏳ Pending re-QA – Critical + High fixed, Medium/Low open
