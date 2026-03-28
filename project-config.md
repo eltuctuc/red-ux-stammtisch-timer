@@ -26,7 +26,7 @@
 - Repository-Inhalt: Alles (Code + Projektdokumentation)
 
 ## Versionierung
-- Aktuelle Version: 0.1.0
+- Aktuelle Version: 0.1.1
 - Strategie: SemVer (MAJOR.MINOR.PATCH)
   - PATCH → Bug-Fix-Runde abgeschlossen (/qa-engineer)
   - MINOR → Feature Production-Ready (/qa-engineer)
