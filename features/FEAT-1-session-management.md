@@ -311,12 +311,12 @@ Kein REST-Backend. Alle Kommunikation über WebSocket (PartyKit).
 ---
 
 ## 5. QA Ergebnisse
-*Ausgefüllt von: /qa-engineer — 2026-03-28 (Re-QA nach Bug-Fix-Runde 1)*
+*Ausgefüllt von: /qa-engineer — 2026-03-28 (Re-QA nach Bug-Fix-Runde 3)*
 
 ### Acceptance Criteria Status
 - [x] Haupt-URL zeigt zwei Aktionen ✅
 - [x] Klick auf "Neue Session starten" erstellt Session ✅
-- [ ] Moderatoren-URL Reconnect-Flow ⚠️ partiell → BUG-FEAT1-QA-007
+- [ ] Moderatoren-URL Reconnect-Fehlerfall ❌ → BUG-FEAT1-QA-014 (Regression: ROOM_EXISTS nie gesendet)
 - [x] Session-Nummer 4 Ziffern ✅
 - [x] Moderatoren-URL mit `?mod=<token>` ✅
 - [x] Copy-Buttons mit "Kopiert!"-Bestätigung ✅
@@ -324,8 +324,8 @@ Kein REST-Backend. Alle Kommunikation über WebSocket (PartyKit).
 - [x] Moderatoren-URL zeigt Steuerungsansicht ✅
 - [x] Teilnehmer-URL zeigt read-only Ansicht ✅
 - [x] Eingabefeld für Session-Nummern ✅
-- [x] Fehlermeldung "Session nicht gefunden" ✅ (QA-002 gefixt)
-- [ ] Session verfällt nach 3h ❌ → BUG-FEAT1-QA-008
+- [x] Fehlermeldung "Session nicht gefunden" ✅
+- [x] Session verfällt nach 3h ✅
 
 ### Security-Check
 - Token-Validierung via modConnections-Set korrekt implementiert
@@ -334,37 +334,30 @@ Kein REST-Backend. Alle Kommunikation über WebSocket (PartyKit).
 - modToken in WS-URL sichtbar – dokumentierte, bewusste Entscheidung → BUG-FEAT1-QA-003 (Low)
 
 ### A11y-Check
-- Fehlende Fokus-/Hover-States global → BUG-FEAT1-UX-002, BUG-FEAT1-UX-009
-- Placeholder erklärt nur Teilnehmer-Flow → BUG-FEAT1-UX-005
-- aria-controls referenziert nicht-existentes DOM-Element → BUG-FEAT1-UX-007
+- button:focus-visible + input:focus-visible global gesetzt ✅ (UX-002 + UX-013 gefixt)
+- aria-controls entfernt, hidden-Attribut korrekt ✅ (UX-007 gefixt)
+- ConnectionIndicator role="status" im error-State falsch – sollte role="alert" sein → BUG-FEAT1-UX-018 (Medium)
 
 ### Offene Bugs
-- ~~BUG-FEAT1-QA-001~~ – Session-Kollisions-Handling fehlt (High) → **Fixed**
-- ~~BUG-FEAT1-QA-002~~ – SESSION_NOT_FOUND nie gesendet (High) → **Fixed**
-- BUG-FEAT1-QA-003 – modToken in WS-URL exponiert (Low)
-- BUG-FEAT1-QA-004 – Token-Only-Eingabe widerspricht AC-Text (Medium)
-- BUG-FEAT1-QA-005 – CopyButton setTimeout ohne Cleanup (Low)
-- ~~BUG-FEAT1-QA-006~~ – ROOM_EXISTS-Retry ohne Abbruchbedingung (High) → **Fixed**
-- BUG-FEAT1-QA-007 – Ungültiger Token: Fehler auf falscher Seite (Medium)
-- ~~BUG-FEAT1-QA-008~~ – Session-Expiry-Alarm bei Session-Erstellung nicht gesetzt (High) → **Fixed**
-- BUG-FEAT1-QA-009 – ParticipantView unterscheidet Fehlerarten nicht (Medium)
-- ~~BUG-FEAT1-QA-010~~ – ModeratorView behandelt SESSION_NOT_FOUND nicht (High) → **Fixed**
-- ~~BUG-FEAT1-UX-001~~ – Fehlende Umlaute in UI-Texten (High) → **Fixed**
-- BUG-FEAT1-UX-002 – Keine Fokus-/Hover-States (Medium)
-- ~~BUG-FEAT1-UX-003~~ – INVALID_TOKEN ohne Escape-Weg (High) → **Fixed**
-- BUG-FEAT1-UX-004 – CopyButton Silent Fail (Medium)
-- BUG-FEAT1-UX-005 – Placeholder nur für Teilnehmer erklärt (Medium)
-- BUG-FEAT1-UX-006 – Moderatoren-URL truncated (Low)
-- BUG-FEAT1-UX-007 – aria-controls referenziert nicht-existentes DOM-Element (Medium)
-- BUG-FEAT1-UX-008 – CopyButton Unicode-Icons statt SVG (Low)
-- BUG-FEAT1-UX-009 – ShareSection Toggle ohne Hover-/Fokus-State (Medium)
-- BUG-FEAT1-UX-010 – ParticipantView kein Loading-State beim Verbindungsaufbau (Medium)
-- BUG-FEAT1-UX-011 – Loading-State täuscht Server-Request vor (Low)
+- BUG-FEAT1-QA-003 – modToken in WS-URL exponiert (Low, bewusste Entscheidung)
+- **BUG-FEAT1-QA-014** – ROOM_EXISTS nie gesendet, Session-ID-Kollision als INVALID_TOKEN fehlgeleitet (High, Regression)
+- **BUG-FEAT1-QA-015** – React Hooks-Verstoß: useEffect nach bedingtem Return in ModeratorView (High)
+- BUG-FEAT1-QA-016 – conn.close() fehlt nach INVALID_TOKEN und SESSION_NOT_FOUND (Medium)
+- BUG-FEAT1-QA-013 – Stille Navigation nach Retry-Erschöpfung – toter Code bis QA-014 gefixt (Low)
+- BUG-FEAT1-UX-016 – "Neue Session starten" ohne Klick-Feedback (Low)
+- BUG-FEAT1-UX-017 – CopyButton error-State verursacht Layout-Shift in ShareSection (Medium)
+- BUG-FEAT1-UX-018 – ConnectionIndicator error ohne klickbare Reload-Aktion, role="status" statt "alert" (Medium)
+- BUG-FEAT1-UX-019 – ROOM_EXISTS-Retry-Erschöpfung navigiert stumm zur LandingPage (Medium)
+- BUG-FEAT1-UX-020 – ShareSection: hidden-Attribut und display:none redundant (Low)
+
+### Bereits behobene Bugs (Bug-Fix-Runden 1–3)
+- ~~QA-001~~ Session-Kollisions-Handling · ~~QA-002~~ SESSION_NOT_FOUND · ~~QA-004~~ Token-Only-AC-Text · ~~QA-005~~ CopyButton setTimeout-Leak · ~~QA-006~~ ROOM_EXISTS-Retry-Loop · ~~QA-007~~ Ungültiger Token falscher Screen · ~~QA-008~~ Session-Expiry-Alarm · ~~QA-009~~ ParticipantView Fehlerarten · ~~QA-010~~ ModeratorView SESSION_NOT_FOUND · ~~QA-011~~ INVALID_TOKEN nie gesendet · ~~QA-012~~ ModeratorView 00:00 beim Reconnect
+- ~~UX-001~~ Umlaute · ~~UX-002~~ Fokus-/Hover-States · ~~UX-003~~ INVALID_TOKEN kein Escape · ~~UX-004~~ CopyButton Silent Fail · ~~UX-005~~ Placeholder nur Teilnehmer · ~~UX-006~~ URL truncated · ~~UX-007~~ aria-controls defekt · ~~UX-008~~ Unicode-Icons · ~~UX-009~~ ShareSection Hover/Fokus · ~~UX-010~~ ParticipantView Loading-State · ~~UX-011~~ isStarting-State täuschend · ~~UX-012~~ CopyButton Fehlermeldung truncated · ~~UX-013~~ input:focus-visible fehlte · ~~UX-014~~ ModeratorView 00:00 beim Verbindungsaufbau · ~~UX-015~~ ConnectionIndicator ohne Handlungsanweisung
 
 ### Summary
-- ✅ 10/12 Acceptance Criteria passed (1 partiell, 1 nicht bestanden – Medium-Bugs)
-- ✅ 7 Bugs gefixt (QA-001, QA-002, QA-006, QA-008, QA-010, UX-001, UX-003)
-- ⚠️ 14 Bugs offen (0 High, 9 Medium, 5 Low) – nicht release-blockend
+- ✅ 11/12 Acceptance Criteria passed (1 nicht bestanden → QA-014 Regression)
+- ✅ 5 Bugs gefixt in Runde 3 (QA-011, QA-012, UX-012–015)
+- ❌ 10 Bugs offen (2 High, 4 Medium, 4 Low)
 
 ### Production-Ready
-✅ Ready – Keine Critical oder High Bugs offen
+❌ NOT Ready – 2 High Bugs: QA-014 (ROOM_EXISTS-Kollisionspfad fehlt) + QA-015 (React Hooks-Verstoß in ModeratorView)
