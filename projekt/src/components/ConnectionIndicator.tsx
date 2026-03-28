@@ -7,7 +7,7 @@ interface ConnectionIndicatorProps {
 const messages: Record<Exclude<ConnectionStatus, 'connected'>, string> = {
   connecting: 'Verbindung wird hergestellt...',
   disconnected: 'Verbindung unterbrochen – wird neu verbunden...',
-  error: 'Verbindungsfehler',
+  error: 'Verbindungsfehler – bitte Seite neu laden',
 };
 
 export default function ConnectionIndicator({ status }: ConnectionIndicatorProps) {

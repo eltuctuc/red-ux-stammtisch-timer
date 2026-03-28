@@ -57,8 +57,8 @@ export default class TimerServer implements Party.Server {
         // Returning moderator with correct token
         this.modConnections.add(conn.id);
       } else {
-        // Different token trying to claim an already-owned room
-        conn.send(JSON.stringify({ type: 'ERROR', code: 'ROOM_EXISTS' }));
+        // Moderator with wrong token – invalid reconnect attempt
+        conn.send(JSON.stringify({ type: 'ERROR', code: 'INVALID_TOKEN' }));
         return;
       }
     } else {

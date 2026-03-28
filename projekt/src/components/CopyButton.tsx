@@ -94,9 +94,9 @@ export default function CopyButton({ value, label }: CopyButtonProps) {
         fontWeight: 500,
         cursor: 'pointer',
         transition: 'background var(--transition-fast), color var(--transition-fast)',
-        whiteSpace: 'nowrap',
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
+        whiteSpace: copyError ? 'normal' : 'nowrap',
+        overflow: copyError ? 'visible' : 'hidden',
+        textOverflow: copyError ? 'unset' : 'ellipsis',
         maxWidth: '100%',
       }}
     >

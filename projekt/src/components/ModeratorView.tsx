@@ -50,7 +50,9 @@ export default function ModeratorView({ sessionId, modToken }: ModeratorViewProp
 
   const status = timerState?.status ?? 'idle';
   const totalDurationMs = timerState?.totalDurationMs ?? 0;
-  const displayMs = timerState?.displayRemainingMs ?? 0;
+  const displayMs = connectionStatus === 'connecting' && !timerState
+    ? null
+    : (timerState?.displayRemainingMs ?? 0);
   const isWarning = timerState?.isWarning ?? false;
 
   // Preset ist aktiv wenn totalDurationMs genau einem Preset entspricht

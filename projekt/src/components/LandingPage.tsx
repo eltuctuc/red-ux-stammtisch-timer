@@ -166,17 +166,6 @@ export default function LandingPage() {
                   background: 'var(--color-surface)',
                   color: 'var(--color-text-primary)',
                   transition: 'border-color var(--transition-fast)',
-                  outline: 'none',
-                }}
-                onFocus={(e) => {
-                  e.currentTarget.style.borderColor = inputError
-                    ? 'var(--color-danger)'
-                    : 'var(--color-accent)';
-                }}
-                onBlur={(e) => {
-                  e.currentTarget.style.borderColor = inputError
-                    ? 'var(--color-danger)'
-                    : 'var(--color-border)';
                 }}
               />
 
