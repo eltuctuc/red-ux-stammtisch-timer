@@ -1,7 +1,7 @@
 # FEAT-2: Timer
 
 ## Status
-Aktueller Schritt: Tech
+Aktueller Schritt: Dev
 
 ## Abhängigkeiten
 - Benötigt: FEAT-1 (Session Management) – Timer läuft innerhalb einer Session
@@ -332,3 +332,25 @@ Optional für Sound:
   - Timer läuft auf 00:00 → expired-State in beiden Tabs sichtbar
   - Moderator pausiert Timer → Teilnehmer sieht eingefrorene Zeit
   - Reset stellt ursprüngliche Dauer wieder her (beide Tabs)
+
+---
+
+## 4. Implementierung
+*Ausgefüllt von: /developer — 2026-03-28*
+
+### Implementierte Dateien
+- `projekt/src/party/timer.ts` – Timer-Kommandos (SET_DURATION, START, PAUSE, RESUME, RESET), 3h-Alarm
+- `projekt/src/hooks/useTimerSession.ts` – rAF-basiertes displayRemainingMs, isWarning, Sound-Trigger
+- `projekt/src/components/TimerDisplay.tsx` – Zustands-Farben, aria-live, tabular-nums
+- `projekt/src/components/PresetButtons.tsx` – 5 Presets mit aktivem Zustand
+- `projekt/src/components/CustomTimeInput.tsx` – Min/Sek-Felder, Validierung, Inline-Fehler
+- `projekt/src/components/TimerControls.tsx` – Kontextabhängige Buttons
+- `projekt/src/components/ConnectionIndicator.tsx` – Dezenter Verbindungsstatus
+- `projekt/src/components/ModeratorView.tsx` – Vollständige Steuerungsansicht
+- `projekt/src/components/ParticipantView.tsx` – Read-only Timer-Ansicht
+
+### Installierte Dependencies
+- Keine neuen (Web Audio API browser-nativ)
+
+### Offene Punkte / Tech-Debt
+- Keine

@@ -1,7 +1,7 @@
 # FEAT-1: Session Management
 
 ## Status
-Aktueller Schritt: Tech
+Aktueller Schritt: Dev
 
 ## Abhängigkeiten
 - Benötigt: Keine
@@ -282,3 +282,28 @@ Kein REST-Backend. Alle Kommunikation über WebSocket (PartyKit).
   - Ungültige Session-Nummer zeigt Inline-Fehlermeldung
   - Moderator-Reconnect via Token-Eingabe öffnet Moderatoren-Ansicht
 
+
+---
+
+## 4. Implementierung
+*Ausgefüllt von: /developer — 2026-03-28*
+
+### Implementierte Dateien
+- `projekt/partykit.json` – PartyKit-Server-Konfiguration
+- `projekt/vite.config.ts` – VITE_PARTYKIT_HOST define-Block
+- `projekt/src/lib/timerTypes.ts` – Gemeinsame Typen (Client + Server)
+- `projekt/src/lib/session.ts` – generateSessionId, generateModToken, formatTime, parseSmartInput
+- `projekt/src/party/timer.ts` – PartyKit Durable Object (Session-Management-Logik)
+- `projekt/src/hooks/useTimerSession.ts` – WebSocket-Hook mit State-Management
+- `projekt/src/components/LandingPage.tsx` – Neue Session + Smart Input
+- `projekt/src/components/SessionPage.tsx` – Routing-Container (Mod vs. Participant)
+- `projekt/src/components/CopyButton.tsx` – Copy mit "Kopiert!"-Feedback
+- `projekt/src/components/ShareSection.tsx` – Collapsible URL-Share
+- `projekt/src/components/SessionBadge.tsx` – Session-Nummer-Badge
+- `projekt/src/App.tsx` – BrowserRouter mit Routes
+
+### Installierte Dependencies
+- `react-router-dom@7.13.2`
+
+### Offene Punkte / Tech-Debt
+- Keine
