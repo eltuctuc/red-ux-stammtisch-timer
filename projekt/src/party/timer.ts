@@ -145,8 +145,10 @@ export default class TimerServer implements Party.Server {
           startedAt: now,
         };
         this.state.lastActivityAt = now;
-        // Alarm fires when timer runs out
-        void this.room.storage.setAlarm(now + timer.remainingMs);
+        // BUG-FEAT2-QA-009: use totalDurationMs for alarm when restarting from expired
+        // (remainingMs is 0 after expiry → alarm would fire immediately otherwise)
+        const alarmDelay = timer.status === 'expired' ? timer.totalDurationMs : timer.remainingMs;
+        void this.room.storage.setAlarm(now + alarmDelay);
         this.state.alarmType = 'timer';
         break;
       }
