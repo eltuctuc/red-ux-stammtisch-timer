@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { generateSessionId, generateModToken } from '../lib/session';
 import { useTimerSession } from '../hooks/useTimerSession';
@@ -19,12 +19,20 @@ export default function ModeratorView({ sessionId, modToken }: ModeratorViewProp
   const { timerState, connectionStatus, connectionError, sessionExpired, sendCommand } =
     useTimerSession({ sessionId, modToken });
 
+  const roomExistsRetryCount = useRef<number>(0);
+
   // Auto-retry with new session ID on collision (room already owned by someone else)
+  // Max 3 retries to prevent infinite redirect loop (BUG-FEAT1-QA-006)
   useEffect(() => {
     if (connectionError?.code === 'ROOM_EXISTS') {
-      const newSessionId = generateSessionId();
-      const newModToken = generateModToken();
-      navigate(`/session/${newSessionId}?mod=${newModToken}`, { replace: true });
+      if (roomExistsRetryCount.current < 3) {
+        roomExistsRetryCount.current += 1;
+        const newSessionId = generateSessionId();
+        const newModToken = generateModToken();
+        navigate(`/session/${newSessionId}?mod=${newModToken}`, { replace: true });
+      } else {
+        navigate('/', { replace: true });
+      }
     }
   }, [connectionError, navigate]);
 

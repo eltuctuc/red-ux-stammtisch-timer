@@ -33,7 +33,15 @@ export default class TimerServer implements Party.Server {
     };
   }
 
-  onConnect(conn: Party.Connection, ctx: Party.ConnectionContext) {
+  async onConnect(conn: Party.Connection, ctx: Party.ConnectionContext) {
+    // Bug fix BUG-FEAT1-QA-010: reject connections to expired sessions
+    const isExpired = await this.room.storage.get<boolean>('expired');
+    if (isExpired) {
+      conn.send(JSON.stringify({ type: 'ERROR', code: 'SESSION_NOT_FOUND' }));
+      conn.close();
+      return;
+    }
+
     const url = new URL(ctx.request.url);
     const tokenParam = url.searchParams.get('mod');
 
@@ -42,6 +50,9 @@ export default class TimerServer implements Party.Server {
         // First moderator connects – claim the token
         this.state.modToken = tokenParam;
         this.modConnections.add(conn.id);
+        // Bug fix BUG-FEAT1-QA-008: set session-expiry alarm on initial creation
+        await this.room.storage.setAlarm(Date.now() + 3 * 60 * 60 * 1_000);
+        this.state.alarmType = 'session';
       } else if (tokenParam === this.state.modToken) {
         // Returning moderator with correct token
         this.modConnections.add(conn.id);
@@ -185,6 +196,8 @@ export default class TimerServer implements Party.Server {
       this.state.alarmType = 'session';
     } else {
       // Session has been inactive for 3 hours – expire everything
+      // Bug fix BUG-FEAT1-QA-010: persist expired flag before resetting state
+      await this.room.storage.put('expired', true);
       this.room.broadcast(JSON.stringify({ type: 'SESSION_EXPIRED' }));
       for (const conn of this.room.getConnections()) {
         conn.close();
