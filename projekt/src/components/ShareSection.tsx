@@ -29,17 +29,13 @@ export default function ShareSection({ sessionId, modToken, initiallyOpen = fals
     }
   }, [isOpen]);
 
-  // BUG-FEAT2-QA-016 + BUG-FEAT2-UX-022: open and focus when initiallyOpen transitions to true.
+  // BUG-FEAT2-QA-016 + BUG-FEAT2-UX-022: open when initiallyOpen transitions to true.
   //   useState(initiallyOpen) only captures the mount-time value; this effect reacts to
   //   the prop becoming true after the first STATE_UPDATE arrives (async).
-  //   Also handles the (theoretical) case where initiallyOpen is already true at mount.
+  //   Focus is handled by the [isOpen] effect above after the DOM update.
   useEffect(() => {
     if (initiallyOpen) {
       setIsOpen(true);
-      // When isOpen was already true at mount the [isOpen] effect won't re-fire, so
-      // trigger focus directly here for that edge case.
-      const btn = firstCopyWrapperRef.current?.querySelector<HTMLButtonElement>('button');
-      btn?.focus();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initiallyOpen]);

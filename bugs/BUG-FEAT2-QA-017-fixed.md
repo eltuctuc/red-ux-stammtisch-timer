@@ -4,7 +4,7 @@
 - **Severity:** Low
 - **Bereich:** A11y
 - **Gefunden von:** QA Engineer
-- **Status:** Open
+- **Status:** Fixed – 2026-03-29
 
 ## Steps to Reproduce
 
