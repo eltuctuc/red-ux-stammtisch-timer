@@ -358,7 +358,7 @@ Optional für Sound:
 ---
 
 ## 5. QA Ergebnisse
-*Ausgefüllt von: /qa-engineer — 2026-03-29 (Re-QA Runde 4)*
+*Ausgefüllt von: /qa-engineer — 2026-03-29 (Re-QA Runde 5)*
 
 ### Acceptance Criteria Status
 - [x] Fünf Preset-Buttons ✅
@@ -367,7 +367,7 @@ Optional für Sound:
 - [x] Moderator kann starten ✅ (QA-013 gefixt)
 - [x] Moderator kann pausieren/fortsetzen ✅
 - [x] Moderator kann zurücksetzen ✅
-- [x] Warning bei ≤ 20% – nur bei running ✅
+- [x] Warning bei ≤ 20% – nur bei running ✅ (QA-014 gefixt)
 - [x] Expired-Zustand bei 00:00 ✅
 - [x] Sound für alle Clients ✅
 - [x] Echtzeit-Sync ✅
@@ -388,8 +388,10 @@ Optional für Sound:
 - aria-controls bewusst entfernt, aria-expanded ausreichend ✅
 - Focus-Management beim Öffnen der ShareSection ✅
 - Focus-Return beim Schließen der ShareSection ✅ (UX-010 gefixt)
-- prefers-reduced-motion: globale Media Query in CSS ✅ (UX-019 gefixt, Partial: ConnectionIndicator inline-style → UX-023)
-- Moderatoren-URL Warning-Box: visuell korrekt, fehlende ARIA-Semantik → UX-021
+- prefers-reduced-motion: ConnectionIndicator inline @media fix ✅ (UX-023 gefixt)
+- Moderatoren-URL Warning-Box: role="region" + aria-label gesetzt ✅ (UX-021 gefixt)
+- Auto-Open Fokus bei initiallyOpen=true: Fix implementiert, aber wirkungslos → QA-016
+- aria-live="assertive" für Pause-State zu aggressiv → UX-025
 
 ### Behobene Bugs (alle Runden)
 - ~~BUG-FEAT2-QA-001~~ – Sound-Trigger Race Condition (High) → **Fixed** ✅
@@ -403,6 +405,7 @@ Optional für Sound:
 - ~~BUG-FEAT2-QA-009~~ – START aus expired → Alarm delay=0 (High) → **Fixed** ✅
 - ~~BUG-FEAT2-QA-012~~ – "Warten auf nächsten Timer…" bei konfigurierter Dauer (Medium) → **Fixed** ✅
 - ~~BUG-FEAT2-QA-013~~ – START aus expired → remainingMs=0 im STATE_UPDATE (High) → **Fixed** ✅
+- ~~BUG-FEAT2-QA-014~~ – isWarning-Flash beim expired→running (Medium) → **Fixed** ✅
 - ~~BUG-FEAT2-UX-001~~ – Paused-Zustand visuell = Running (High) → **Fixed** ✅
 - ~~BUG-FEAT2-UX-002~~ – aria-live auf tickendem Timer (High) → **Fixed** ✅
 - ~~BUG-FEAT2-UX-003~~ – Beide Felder als aria-invalid (Medium) → **Fixed** ✅
@@ -418,23 +421,26 @@ Optional für Sound:
 - ~~BUG-FEAT2-UX-013~~ – Expired-Zustand Teilnehmer ohne Hinweistext (Medium) → **Fixed** ✅
 - ~~BUG-FEAT2-UX-018~~ – Moderatoren-URL ohne visuelle Warnung (High) → **Fixed** ✅
 - ~~BUG-FEAT2-UX-019~~ – prefers-reduced-motion ignoriert (Medium) → **Fixed** ✅
+- ~~BUG-FEAT2-UX-021~~ – Moderatoren-URL Warning-Box kein ARIA-Landmark (Medium) → **Fixed** ✅
+- ~~BUG-FEAT2-UX-022~~ – ShareSection Auto-Open kein initialer Fokus (Medium) → **Fixed** ✅ (wirkungslos bis QA-016 gefixt)
+- ~~BUG-FEAT2-UX-023~~ – ConnectionIndicator prefers-reduced-motion ignoriert (Medium) → **Fixed** ✅
 
-### Offene Bugs (Re-QA Runde 4)
-- BUG-FEAT2-QA-014 – isWarning-Flash für einen Frame nach "Nochmal starten" aus expired (Medium)
-- BUG-FEAT2-UX-021 – Moderatoren-URL Warning-Box nicht als Warnung für Screenreader markiert (Medium)
-- BUG-FEAT2-UX-022 – ShareSection Auto-Open setzt keinen initialen Fokus (Medium)
-- BUG-FEAT2-UX-023 – ConnectionIndicator pulse-Animation ignoriert prefers-reduced-motion effektiv (Medium)
+### Offene Bugs (Re-QA Runde 5)
+- BUG-FEAT2-QA-016 – ShareSection Auto-Open funktioniert grundsätzlich nicht (useState reagiert nicht auf async initiallyOpen-Prop) (Medium)
+- BUG-FEAT2-UX-024 – CopyButton Moderatoren-Link fehlt aria-describedby zum Warnungstext (Medium)
+- BUG-FEAT2-UX-025 – aria-live="assertive" für Pause-Announcement zu aggressiv (Medium)
+- BUG-FEAT2-QA-015 – displayRemainingMs zeigt 00:00 für einen Frame nach State-Transition (Low)
 - BUG-FEAT2-UX-014 – Kein "Timer pausiert"-Text für Teilnehmer im paused-Zustand (Low)
 - BUG-FEAT2-UX-015 – Keine Hover-Zustände auf Preset-Buttons (Low)
 - BUG-FEAT2-UX-016 – ShareSection doppelte hidden-Logik + verwaiste id (Low)
 - BUG-FEAT2-UX-017 – URL-Text in ShareSection bei 13px grenzwertig lesbar (Low)
-- BUG-FEAT2-QA-015 – displayRemainingMs zeigt 00:00 für einen Frame nach State-Transition (Low)
 - BUG-FEAT2-UX-020 – Kein Feedback nach "Übernehmen"-Klick (Low)
+- BUG-FEAT2-UX-026 – Inkonsistente Disabled-Darstellung in TimerControls (Low)
 
 ### Summary
 - ✅ 12/12 Acceptance Criteria passed
-- ✅ 26 Bugs aus Runden 1–4 gefixt
-- ❌ 10 offene Bugs (0 Critical, 0 High, 4 Medium, 6 Low)
+- ✅ 30 Bugs aus Runden 1–5 gefixt
+- ❌ 10 offene Bugs (0 Critical, 0 High, 3 Medium, 7 Low)
 
 ### Production-Ready
-❌ NOT Ready – 4 offene Medium-Bugs (QA-014, UX-021, UX-022, UX-023) – alle A11y-relevant
+❌ NOT Ready – 3 offene Medium-Bugs (QA-016, UX-024, UX-025)
