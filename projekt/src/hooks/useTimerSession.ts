@@ -174,10 +174,13 @@ export function useTimerSession({
 
   // Derived state
   // BUG-FEAT2-QA-003: isWarning only when timer is actively running (not paused)
+  // BUG-FEAT2-QA-014: guard displayRemainingMs > 0 prevents false warning on expired→running transition
+  //   (serverState.status becomes 'running' one frame before rAF resets displayRemainingMs from 0)
   const isWarning =
     serverState !== null &&
     serverState.totalDurationMs > 0 &&
     serverState.status === 'running' &&
+    displayRemainingMs > 0 &&
     displayRemainingMs <= serverState.totalDurationMs * 0.2;
 
   const timerState =

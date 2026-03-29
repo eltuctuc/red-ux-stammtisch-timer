@@ -4,7 +4,8 @@
 - **Severity:** Medium
 - **Bereich:** Functional
 - **Gefunden von:** QA Engineer
-- **Status:** Open
+- **Status:** Fixed – 2026-03-29
+- **Fix:** `displayRemainingMs > 0` Guard in `isWarning`-Berechnung in `useTimerSession.ts` ergänzt. Verhindert false-positive Warning-Frame beim expired→running Übergang, da `displayRemainingMs` erst im nächsten rAF-Frame auf den korrekten Wert aktualisiert wird.
 
 ## Steps to Reproduce
 

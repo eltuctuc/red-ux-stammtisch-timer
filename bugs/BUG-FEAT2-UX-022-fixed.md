@@ -4,7 +4,8 @@
 - **Severity:** Medium
 - **Bereich:** A11y / Focus Management
 - **Gefunden von:** UX Reviewer
-- **Status:** Open
+- **Status:** Fixed – 2026-03-29
+- **Fix:** Separater `useEffect` ohne Dependencies in `ShareSection.tsx` ergänzt, der einmalig beim Mount feuert und Fokus auf den ersten CopyButton setzt, wenn `initiallyOpen=true`. Der bestehende `isFirstRender`-Guard bleibt für User-triggered Opens unverändert.
 
 ## Problem
 

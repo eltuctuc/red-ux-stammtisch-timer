@@ -29,6 +29,17 @@ export default function ShareSection({ sessionId, modToken, initiallyOpen = fals
     }
   }, [isOpen]);
 
+  // BUG-FEAT2-UX-022: set focus on initial mount when initiallyOpen=true
+  //   The isFirstRender guard above blocks the effect for the initial open state,
+  //   so a separate one-time effect handles focus for the auto-open case.
+  useEffect(() => {
+    if (initiallyOpen) {
+      const btn = firstCopyWrapperRef.current?.querySelector<HTMLButtonElement>('button');
+      btn?.focus();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const origin = typeof window !== 'undefined' ? window.location.origin : '';
   const participantUrl = `${origin}/session/${sessionId}`;
   const moderatorUrl = `${origin}/session/${sessionId}?mod=${modToken}`;
@@ -124,7 +135,10 @@ export default function ShareSection({ sessionId, modToken, initiallyOpen = fals
         </div>
 
         {/* Moderatoren-URL – BUG-FEAT2-UX-018: visuelle Warnung vor versehentlichem Teilen */}
+        {/* BUG-FEAT2-UX-021: role="region" + aria-label kennzeichnet den Bereich semantisch als Warnung */}
         <div
+          role="region"
+          aria-label="Moderatoren-Link – nur für dich"
           style={{
             display: 'flex',
             flexDirection: 'column',

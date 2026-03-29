@@ -31,8 +31,10 @@ export default function ConnectionIndicator({ status }: ConnectionIndicatorProps
         color: 'var(--color-text-secondary)',
       }}
     >
+      {/* BUG-FEAT2-UX-023: className used by inline media query to fully disable animation */}
       <span
         aria-hidden="true"
+        className="connection-dot"
         style={{
           display: 'inline-block',
           width: '6px',
@@ -74,6 +76,11 @@ export default function ConnectionIndicator({ status }: ConnectionIndicatorProps
         @keyframes pulse {
           0%, 100% { opacity: 1; }
           50% { opacity: 0.3; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .connection-dot {
+            animation: none !important;
+          }
         }
       `}</style>
     </div>

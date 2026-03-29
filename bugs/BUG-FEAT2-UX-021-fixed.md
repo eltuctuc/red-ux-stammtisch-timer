@@ -4,7 +4,8 @@
 - **Severity:** Medium
 - **Bereich:** A11y
 - **Gefunden von:** UX Reviewer
-- **Status:** Open
+- **Status:** Fixed – 2026-03-29
+- **Fix:** Warning-Container in `ShareSection.tsx` mit `role="region"` und `aria-label="Moderatoren-Link – nur für dich"` ausgezeichnet. Screenreader kündigt den Bereich jetzt semantisch als eigene Region an.
 
 ## Problem
 

@@ -4,7 +4,8 @@
 - **Severity:** Medium
 - **Bereich:** A11y / prefers-reduced-motion
 - **Gefunden von:** UX Reviewer
-- **Status:** Open
+- **Status:** Fixed – 2026-03-29
+- **Fix:** `@media (prefers-reduced-motion: reduce) { .connection-dot { animation: none !important; } }` direkt in den inline `<style>`-Tag von `ConnectionIndicator.tsx` ergänzt. Dem Dot-Span `className="connection-dot"` gegeben, damit das Media Query greift.
 
 ## Problem
 
