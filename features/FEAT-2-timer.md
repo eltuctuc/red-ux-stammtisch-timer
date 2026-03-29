@@ -358,13 +358,13 @@ Optional für Sound:
 ---
 
 ## 5. QA Ergebnisse
-*Ausgefüllt von: /qa-engineer — 2026-03-28*
+*Ausgefüllt von: /qa-engineer — 2026-03-29 (Re-QA Runde 4)*
 
 ### Acceptance Criteria Status
 - [x] Fünf Preset-Buttons ✅
 - [x] Individuelle Zeiteingabe ✅
 - [x] Timer startet nicht automatisch ✅
-- [x] Moderator kann starten ✅ (aber "Nochmal starten" aus expired broken → BUG-FEAT2-QA-009)
+- [x] Moderator kann starten ✅ (QA-013 gefixt)
 - [x] Moderator kann pausieren/fortsetzen ✅
 - [x] Moderator kann zurücksetzen ✅
 - [x] Warning bei ≤ 20% – nur bei running ✅
@@ -378,17 +378,20 @@ Optional für Sound:
 - Mod-Kommandos nur nach Token-Validierung ausgeführt ✅
 - Server-seitiger durationMs-Clamp implementiert ✅
 - START ohne Dauer serverseitig abgelehnt ✅
+- ArrayBuffer-Nachrichten verworfen ✅
 - XSS-Risiko: keines (Timer-Werte sind Numbers, sessionId/modToken sind generierte Strings) ✅
+- modToken-Exposure in URL: Design-bedingt, Warnung in ShareSection vorhanden ✅
 
 ### A11y-Check
 - aria-live nur auf State-Change-Region, nicht auf tickendem Timer ✅
 - aria-invalid per-field korrekt ✅
 - aria-controls bewusst entfernt, aria-expanded ausreichend ✅
 - Focus-Management beim Öffnen der ShareSection ✅
-- Focus-Return beim Schließen fehlt → BUG-FEAT2-UX-010
-- prefers-reduced-motion nicht implementiert → BUG-FEAT2-UX-019
+- Focus-Return beim Schließen der ShareSection ✅ (UX-010 gefixt)
+- prefers-reduced-motion: globale Media Query in CSS ✅ (UX-019 gefixt, Partial: ConnectionIndicator inline-style → UX-023)
+- Moderatoren-URL Warning-Box: visuell korrekt, fehlende ARIA-Semantik → UX-021
 
-### Behobene Bugs (Re-QA bestätigt)
+### Behobene Bugs (alle Runden)
 - ~~BUG-FEAT2-QA-001~~ – Sound-Trigger Race Condition (High) → **Fixed** ✅
 - ~~BUG-FEAT2-QA-002~~ – Server setzt Status nie auf 'expired' (Critical) → **Fixed** ✅
 - ~~BUG-FEAT2-QA-003~~ – isWarning true auch bei pausiertem Timer (Medium) → **Fixed** ✅
@@ -397,35 +400,41 @@ Optional für Sound:
 - ~~BUG-FEAT2-QA-006~~ – START ohne totalDurationMs-Check (Medium) → **Fixed** ✅
 - ~~BUG-FEAT2-QA-007~~ – AudioContext nicht geschlossen (Low) → **Fixed** ✅
 - ~~BUG-FEAT2-QA-008~~ – ShareSection öffnet sich bei jedem Reload (Low) → **Fixed** ✅
+- ~~BUG-FEAT2-QA-009~~ – START aus expired → Alarm delay=0 (High) → **Fixed** ✅
+- ~~BUG-FEAT2-QA-012~~ – "Warten auf nächsten Timer…" bei konfigurierter Dauer (Medium) → **Fixed** ✅
+- ~~BUG-FEAT2-QA-013~~ – START aus expired → remainingMs=0 im STATE_UPDATE (High) → **Fixed** ✅
 - ~~BUG-FEAT2-UX-001~~ – Paused-Zustand visuell = Running (High) → **Fixed** ✅
 - ~~BUG-FEAT2-UX-002~~ – aria-live auf tickendem Timer (High) → **Fixed** ✅
 - ~~BUG-FEAT2-UX-003~~ – Beide Felder als aria-invalid (Medium) → **Fixed** ✅
 - ~~BUG-FEAT2-UX-004~~ – Idle zeigt "00:00" (Medium) → **Fixed** ✅
 - ~~BUG-FEAT2-UX-005~~ – Deaktivierte Presets ohne Erklärung (Low) → **Fixed** ✅
-- ~~BUG-FEAT2-UX-006~~ – aria-controls zeigt ins Leere + kein Fokus-Management (Medium) → **Fixed** ✅ (Opening-Focus; Closing-Focus → BUG-FEAT2-UX-010)
+- ~~BUG-FEAT2-UX-006~~ – aria-controls zeigt ins Leere + kein Fokus-Management (Medium) → **Fixed** ✅
 - ~~BUG-FEAT2-UX-007~~ – Unicode ⎘ statt SVG-Icon (Low) → **Fixed** ✅
 - ~~BUG-FEAT2-UX-008~~ – Warning-State Kontrast ~4.6:1 (Medium) → **Fixed** ✅
 - ~~BUG-FEAT2-UX-009~~ – Expired + Starten-Button gleichzeitig (Medium) → **Fixed** ✅
+- ~~BUG-FEAT2-UX-010~~ – ShareSection Fokus-Return beim Schließen fehlt (Medium) → **Fixed** ✅
+- ~~BUG-FEAT2-UX-011~~ – "Übernehmen"-Button kein aria-label (Medium) → **Fixed** ✅
+- ~~BUG-FEAT2-UX-012~~ – CustomTimeInput nicht geleert nach Preset (Medium) → **Fixed** ✅
+- ~~BUG-FEAT2-UX-013~~ – Expired-Zustand Teilnehmer ohne Hinweistext (Medium) → **Fixed** ✅
+- ~~BUG-FEAT2-UX-018~~ – Moderatoren-URL ohne visuelle Warnung (High) → **Fixed** ✅
+- ~~BUG-FEAT2-UX-019~~ – prefers-reduced-motion ignoriert (Medium) → **Fixed** ✅
 
-### Offene Bugs (Re-QA Runde 2)
-- BUG-FEAT2-QA-009 – START aus expired-State → Alarm delay=0, sofort wieder expired (High)
-- BUG-FEAT2-QA-012 – "Warten auf nächsten Timer…" auch bei konfigurierter Dauer (Medium)
-- BUG-FEAT2-UX-010 – ShareSection: Fokus-Return beim Schließen fehlt (Medium)
-- BUG-FEAT2-UX-011 – "Übernehmen"-Button ohne kontextuelles aria-label (Medium)
-- BUG-FEAT2-UX-012 – CustomTimeInput-Felder nach Preset-Auswahl nicht geleert (Medium)
-- BUG-FEAT2-UX-013 – Expired-Zustand Teilnehmer ohne Handlungshinweis (Medium)
-- BUG-FEAT2-UX-014 – Kein Statustext im Paused-Zustand für Teilnehmer (Low)
+### Offene Bugs (Re-QA Runde 4)
+- BUG-FEAT2-QA-014 – isWarning-Flash für einen Frame nach "Nochmal starten" aus expired (Medium)
+- BUG-FEAT2-UX-021 – Moderatoren-URL Warning-Box nicht als Warnung für Screenreader markiert (Medium)
+- BUG-FEAT2-UX-022 – ShareSection Auto-Open setzt keinen initialen Fokus (Medium)
+- BUG-FEAT2-UX-023 – ConnectionIndicator pulse-Animation ignoriert prefers-reduced-motion effektiv (Medium)
+- BUG-FEAT2-UX-014 – Kein "Timer pausiert"-Text für Teilnehmer im paused-Zustand (Low)
 - BUG-FEAT2-UX-015 – Keine Hover-Zustände auf Preset-Buttons (Low)
 - BUG-FEAT2-UX-016 – ShareSection doppelte hidden-Logik + verwaiste id (Low)
 - BUG-FEAT2-UX-017 – URL-Text in ShareSection bei 13px grenzwertig lesbar (Low)
-- BUG-FEAT2-UX-018 – Moderatoren-URL ohne visuelle Warnung vor versehentlichem Teilen (High)
-- BUG-FEAT2-UX-019 – prefers-reduced-motion nicht implementiert (Medium)
+- BUG-FEAT2-QA-015 – displayRemainingMs zeigt 00:00 für einen Frame nach State-Transition (Low)
 - BUG-FEAT2-UX-020 – Kein Feedback nach "Übernehmen"-Klick (Low)
 
 ### Summary
-- ✅ 12 Acceptance Criteria passed
-- ✅ 17 Bugs aus Runde 1 gefixt (re-QA bestätigt)
-- ❌ 13 neue Bugs (1 High QA, 1 High UX, 5 Medium, 6 Low)
+- ✅ 12/12 Acceptance Criteria passed
+- ✅ 26 Bugs aus Runden 1–4 gefixt
+- ❌ 10 offene Bugs (0 Critical, 0 High, 4 Medium, 6 Low)
 
 ### Production-Ready
-❌ NOT Ready – BUG-FEAT2-QA-009 (High): "Nochmal starten" aus expired-State broken (Regression)
+❌ NOT Ready – 4 offene Medium-Bugs (QA-014, UX-021, UX-022, UX-023) – alle A11y-relevant
