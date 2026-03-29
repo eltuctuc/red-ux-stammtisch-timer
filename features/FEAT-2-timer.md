@@ -1,7 +1,7 @@
 # FEAT-2: Timer
 
 ## Status
-Aktueller Schritt: Dev
+Aktueller Schritt: Done
 
 ## Abhängigkeiten
 - Benötigt: FEAT-1 (Session Management) – Timer läuft innerhalb einer Session

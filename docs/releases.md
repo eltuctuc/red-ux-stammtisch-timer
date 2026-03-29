@@ -1,5 +1,16 @@
 # Release History
 
+## 2026-03-29 – v0.2.0
+### Neue Features
+- **FEAT-2 – Timer:** Moderatoren können Timebox-Dauern per Preset oder Freifeld setzen und den Countdown starten/pausieren/zurücksetzen; alle Teilnehmer sehen den Timer in Echtzeit mit Sound-Alert bei Ablauf.
+
+### Bug Fixes
+- **BUG-FEAT2-QA-016:** ShareSection Auto-Open: useState(initiallyOpen) reagierte nicht auf async Prop-Änderungen nach erstem STATE_UPDATE – fix via useEffect([initiallyOpen]). *(Severity: Medium)*
+- **BUG-FEAT2-UX-024:** CopyButton Moderatoren-Link erhält aria-describedby zum Warnungstext – Screenreader-Nutzer hören Sicherheitshinweis beim Tab-Fokus. *(Severity: Medium)*
+- **BUG-FEAT2-UX-025:** aria-live-Levels getrennt: assertive nur für expired, polite für paused. *(Severity: Medium)*
+- **BUG-FEAT2-UX-026:** Disabled-Darstellung in TimerControls vereinheitlicht (opacity:0.5 für beide Button-Typen). *(Severity: Low)*
+- **BUG-FEAT2-UX-027 / QA-017:** Redundanter btn?.focus()-Call im [initiallyOpen]-Effect entfernt – Focus-Management liegt korrekt beim [isOpen]-Effect nach DOM-Update. *(Severity: Medium)*
+
 ## 2026-03-28 – v0.1.1
 ### Bug Fixes
 - **BUG-FEAT1-QA-020:** modToken in DO-Storage persistiert – überlebt Durable Object Restarts, verhindert Auth-Übernahme nach Neustart. *(Severity: High)*
