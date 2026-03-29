@@ -117,7 +117,8 @@ export default function ParticipantView({ sessionId }: ParticipantViewProps) {
       <TimerDisplay status={status} displayMs={displayMs} isWarning={isWarning} />
 
       {/* BUG-FEAT2-UX-004: help participants distinguish idle from expired */}
-      {status === 'idle' && timerState !== null && (
+      {/* BUG-FEAT2-QA-012: only show "waiting" text when no duration is configured yet */}
+      {status === 'idle' && timerState !== null && timerState.totalDurationMs === 0 && (
         <p
           aria-live="polite"
           style={{
@@ -127,6 +128,19 @@ export default function ParticipantView({ sessionId }: ParticipantViewProps) {
           }}
         >
           Warten auf nächsten Timer…
+        </p>
+      )}
+
+      {/* BUG-FEAT2-UX-013: expired state hint for participants */}
+      {status === 'expired' && (
+        <p
+          style={{
+            fontSize: '15px',
+            color: 'var(--color-text-secondary)',
+            textAlign: 'center',
+          }}
+        >
+          Zeit abgelaufen.
         </p>
       )}
 

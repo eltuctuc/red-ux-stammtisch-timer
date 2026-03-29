@@ -1,19 +1,29 @@
-import { useState, useId } from 'react';
+import { useState, useEffect, useId } from 'react';
 
 interface CustomTimeInputProps {
   onSubmit: (ms: number) => void;
   disabled?: boolean;
+  resetTrigger?: number;
 }
 
 // BUG-FEAT2-UX-003: track which field caused the error for per-field aria-invalid
 type ErrorField = 'seconds' | 'both' | null;
 
-export default function CustomTimeInput({ onSubmit, disabled }: CustomTimeInputProps) {
+export default function CustomTimeInput({ onSubmit, disabled, resetTrigger }: CustomTimeInputProps) {
   const [minutes, setMinutes] = useState('');
   const [seconds, setSeconds] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [errorField, setErrorField] = useState<ErrorField>(null);
   const id = useId();
+
+  // BUG-FEAT2-UX-012: reset fields when a preset was selected externally
+  useEffect(() => {
+    if (resetTrigger === undefined || resetTrigger === 0) return;
+    setMinutes('');
+    setSeconds('');
+    setError(null);
+    setErrorField(null);
+  }, [resetTrigger]);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -158,6 +168,7 @@ export default function CustomTimeInput({ onSubmit, disabled }: CustomTimeInputP
         <button
           type="submit"
           disabled={disabled}
+          aria-label="Individuelle Zeit übernehmen"
           style={{
             height: '44px',
             padding: '0 var(--space-4)',

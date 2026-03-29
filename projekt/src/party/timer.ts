@@ -139,16 +139,16 @@ export default class TimerServer implements Party.Server {
         // BUG-FEAT2-QA-006: reject start without a duration set
         if (timer.totalDurationMs === 0) return;
         const now = Date.now();
+        // BUG-FEAT2-QA-013: when restarting from expired, remainingMs is 0 – reset to totalDurationMs
+        const startingRemainingMs = timer.status === 'expired' ? timer.totalDurationMs : timer.remainingMs;
         this.state.timer = {
           ...timer,
           status: 'running',
+          remainingMs: startingRemainingMs,
           startedAt: now,
         };
         this.state.lastActivityAt = now;
-        // BUG-FEAT2-QA-009: use totalDurationMs for alarm when restarting from expired
-        // (remainingMs is 0 after expiry → alarm would fire immediately otherwise)
-        const alarmDelay = timer.status === 'expired' ? timer.totalDurationMs : timer.remainingMs;
-        void this.room.storage.setAlarm(now + alarmDelay);
+        void this.room.storage.setAlarm(now + startingRemainingMs);
         this.state.alarmType = 'timer';
         break;
       }

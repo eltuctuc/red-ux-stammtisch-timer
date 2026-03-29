@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { generateSessionId, generateModToken } from '../lib/session';
 import { useTimerSession } from '../hooks/useTimerSession';
@@ -21,6 +21,8 @@ export default function ModeratorView({ sessionId, modToken, isNew }: ModeratorV
     useTimerSession({ sessionId, modToken, isNew }); // BUG-FEAT1-QA-014
 
   const roomExistsRetryCount = useRef<number>(0);
+  // BUG-FEAT2-UX-012: counter incremented on preset selection so CustomTimeInput resets its fields
+  const [presetResetKey, setPresetResetKey] = useState(0);
   // BUG-FEAT2-QA-008: compute initiallyOpen once after first timerState arrives,
   // using sessionStorage so the ShareSection only auto-opens once per browser session
   const shareInitiallyOpenRef = useRef<boolean | null>(null);
@@ -74,6 +76,15 @@ export default function ModeratorView({ sessionId, modToken, isNew }: ModeratorV
       sendCommand({ type: 'SET_DURATION', durationMs: ms });
     },
     [sendCommand]
+  );
+
+  // BUG-FEAT2-UX-012: separate handler for preset selection that also resets CustomTimeInput
+  const handlePresetSelect = useCallback(
+    (ms: number) => {
+      handleSetDuration(ms);
+      setPresetResetKey((k) => k + 1);
+    },
+    [handleSetDuration]
   );
 
   const handleStart = useCallback(() => sendCommand({ type: 'START' }), [sendCommand]);
@@ -167,7 +178,7 @@ export default function ModeratorView({ sessionId, modToken, isNew }: ModeratorV
 
       <section aria-label="Zeitvorgaben" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
         <PresetButtons
-          onSelect={handleSetDuration}
+          onSelect={handlePresetSelect}
           selectedMs={selectedPreset}
           disabled={controlsDisabled || status === 'running'}
         />
@@ -180,6 +191,7 @@ export default function ModeratorView({ sessionId, modToken, isNew }: ModeratorV
         <CustomTimeInput
           onSubmit={handleSetDuration}
           disabled={controlsDisabled || status === 'running'}
+          resetTrigger={presetResetKey}
         />
       </section>
 

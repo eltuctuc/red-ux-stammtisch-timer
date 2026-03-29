@@ -12,7 +12,9 @@ export default function ShareSection({ sessionId, modToken, initiallyOpen = fals
   const [isHovered, setIsHovered] = useState(false);
 
   // BUG-FEAT2-UX-006: focus first interactive element when section is opened by user
+  // BUG-FEAT2-UX-010: return focus to toggle button when section is closed
   const firstCopyWrapperRef = useRef<HTMLDivElement>(null);
+  const toggleButtonRef = useRef<HTMLButtonElement>(null);
   const isFirstRender = useRef(true);
   useEffect(() => {
     if (isFirstRender.current) {
@@ -22,6 +24,8 @@ export default function ShareSection({ sessionId, modToken, initiallyOpen = fals
     if (isOpen) {
       const btn = firstCopyWrapperRef.current?.querySelector<HTMLButtonElement>('button');
       btn?.focus();
+    } else {
+      toggleButtonRef.current?.focus();
     }
   }, [isOpen]);
 
@@ -39,6 +43,7 @@ export default function ShareSection({ sessionId, modToken, initiallyOpen = fals
     >
       {/* aria-controls removed: element is always in DOM, aria-expanded is sufficient */}
       <button
+        ref={toggleButtonRef}
         type="button"
         onClick={() => setIsOpen((v) => !v)}
         onMouseEnter={() => setIsHovered(true)}
@@ -118,10 +123,23 @@ export default function ShareSection({ sessionId, modToken, initiallyOpen = fals
           <CopyButton value={participantUrl} label="Teilnehmer-Link kopieren" />
         </div>
 
-        {/* Moderatoren-URL */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
-          <p style={{ fontSize: '13px', color: 'var(--color-text-secondary)', fontWeight: 500 }}>
-            Mein Moderatoren-Link (privat halten)
+        {/* Moderatoren-URL – BUG-FEAT2-UX-018: visuelle Warnung vor versehentlichem Teilen */}
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 'var(--space-2)',
+            background: 'var(--timer-bg-warning)',
+            border: '1px solid #E8C54A',
+            borderRadius: 'var(--radius-md)',
+            padding: 'var(--space-3)',
+          }}
+        >
+          <p style={{ fontSize: '14px', color: '#7A4900', fontWeight: 600 }}>
+            Mein Moderatoren-Link
+          </p>
+          <p style={{ fontSize: '13px', color: '#7A4900' }}>
+            Nur für dich – wer diesen Link hat, kann den Timer steuern.
           </p>
           <code
             style={{
