@@ -15,11 +15,12 @@ const primaryStyle = (disabled: boolean): React.CSSProperties => ({
   padding: '0 var(--space-6)',
   borderRadius: 'var(--radius-md)',
   border: 'none',
-  background: disabled ? 'var(--color-border)' : 'var(--color-accent)',
-  color: disabled ? 'var(--color-text-secondary)' : 'white',
+  background: 'var(--color-accent)',
+  color: 'white',
   fontWeight: 600,
   fontSize: '15px',
   cursor: disabled ? 'not-allowed' : 'pointer',
+  opacity: disabled ? 0.5 : 1,
   transition: 'background var(--transition-fast)',
 });
 
@@ -29,7 +30,7 @@ const secondaryStyle = (disabled: boolean): React.CSSProperties => ({
   borderRadius: 'var(--radius-md)',
   border: '1px solid var(--color-border)',
   background: 'var(--color-surface)',
-  color: disabled ? 'var(--color-text-secondary)' : 'var(--color-text-primary)',
+  color: 'var(--color-text-primary)',
   fontWeight: 500,
   fontSize: '15px',
   cursor: disabled ? 'not-allowed' : 'pointer',

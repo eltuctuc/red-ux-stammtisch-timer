@@ -29,16 +29,20 @@ export default function ShareSection({ sessionId, modToken, initiallyOpen = fals
     }
   }, [isOpen]);
 
-  // BUG-FEAT2-UX-022: set focus on initial mount when initiallyOpen=true
-  //   The isFirstRender guard above blocks the effect for the initial open state,
-  //   so a separate one-time effect handles focus for the auto-open case.
+  // BUG-FEAT2-QA-016 + BUG-FEAT2-UX-022: open and focus when initiallyOpen transitions to true.
+  //   useState(initiallyOpen) only captures the mount-time value; this effect reacts to
+  //   the prop becoming true after the first STATE_UPDATE arrives (async).
+  //   Also handles the (theoretical) case where initiallyOpen is already true at mount.
   useEffect(() => {
     if (initiallyOpen) {
+      setIsOpen(true);
+      // When isOpen was already true at mount the [isOpen] effect won't re-fire, so
+      // trigger focus directly here for that edge case.
       const btn = firstCopyWrapperRef.current?.querySelector<HTMLButtonElement>('button');
       btn?.focus();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [initiallyOpen]);
 
   const origin = typeof window !== 'undefined' ? window.location.origin : '';
   const participantUrl = `${origin}/session/${sessionId}`;
@@ -152,7 +156,7 @@ export default function ShareSection({ sessionId, modToken, initiallyOpen = fals
           <p style={{ fontSize: '14px', color: '#7A4900', fontWeight: 600 }}>
             Mein Moderatoren-Link
           </p>
-          <p style={{ fontSize: '13px', color: '#7A4900' }}>
+          <p id="mod-url-warning" style={{ fontSize: '13px', color: '#7A4900' }}>
             Nur für dich – wer diesen Link hat, kann den Timer steuern.
           </p>
           <code
@@ -165,7 +169,7 @@ export default function ShareSection({ sessionId, modToken, initiallyOpen = fals
           >
             {moderatorUrl}
           </code>
-          <CopyButton value={moderatorUrl} label="Moderatoren-Link kopieren" />
+          <CopyButton value={moderatorUrl} label="Moderatoren-Link kopieren" describedBy="mod-url-warning" />
         </div>
       </div>
     </div>

@@ -4,7 +4,7 @@
 - **Severity:** Medium
 - **Bereich:** A11y
 - **Gefunden von:** UX Reviewer
-- **Status:** Open
+- **Status:** Fixed – 2026-03-29
 
 ## Problem
 

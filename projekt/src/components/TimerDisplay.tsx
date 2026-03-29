@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import { formatTime } from '../lib/session';
 
 type TimerStatus = 'idle' | 'running' | 'paused' | 'expired';
@@ -29,14 +28,6 @@ export default function TimerDisplay({ status, displayMs, isWarning }: TimerDisp
 
   const label = displayMs === null ? '--:--' : formatTime(displayMs);
 
-  // Announce only meaningful state changes to screen readers
-  const [announcement, setAnnouncement] = useState('');
-  useEffect(() => {
-    if (status === 'expired') setAnnouncement('Zeit abgelaufen');
-    else if (status === 'paused') setAnnouncement('Timer pausiert');
-    else setAnnouncement('');
-  }, [status]);
-
   return (
     <div
       style={{
@@ -53,23 +44,21 @@ export default function TimerDisplay({ status, displayMs, isWarning }: TimerDisp
         position: 'relative',
       }}
     >
-      {/* Visually hidden live region – only announces status changes, not every tick */}
+      {/* BUG-FEAT2-UX-025: two separate live regions – assertive only for expired (immediate interruption
+          justified), polite for paused (routine action, no need to disrupt ongoing reading) */}
       <span
         aria-live="assertive"
         aria-atomic="true"
-        style={{
-          position: 'absolute',
-          width: '1px',
-          height: '1px',
-          padding: 0,
-          margin: '-1px',
-          overflow: 'hidden',
-          clip: 'rect(0,0,0,0)',
-          whiteSpace: 'nowrap',
-          borderWidth: 0,
-        }}
+        style={{ position: 'absolute', width: '1px', height: '1px', padding: 0, margin: '-1px', overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap', borderWidth: 0 }}
       >
-        {announcement}
+        {status === 'expired' ? 'Zeit abgelaufen' : ''}
+      </span>
+      <span
+        aria-live="polite"
+        aria-atomic="true"
+        style={{ position: 'absolute', width: '1px', height: '1px', padding: 0, margin: '-1px', overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap', borderWidth: 0 }}
+      >
+        {status === 'paused' ? 'Timer pausiert' : ''}
       </span>
 
       <time

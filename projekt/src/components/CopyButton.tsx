@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from 'react';
 interface CopyButtonProps {
   value: string;
   label: string;
+  describedBy?: string;
 }
 
 async function copyToClipboard(text: string): Promise<void> {
@@ -34,7 +35,7 @@ const IconCheck = () => (
   </svg>
 );
 
-export default function CopyButton({ value, label }: CopyButtonProps) {
+export default function CopyButton({ value, label, describedBy }: CopyButtonProps) {
   const [copied, setCopied] = useState(false);
   const [copyError, setCopyError] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -82,6 +83,7 @@ export default function CopyButton({ value, label }: CopyButtonProps) {
         type="button"
         onClick={handleClick}
         aria-label={ariaLabel}
+        aria-describedby={describedBy}
         style={{
           display: 'inline-flex',
           alignItems: 'center',

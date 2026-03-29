@@ -4,7 +4,7 @@
 - **Severity:** Medium
 - **Bereich:** Functional
 - **Gefunden von:** QA Engineer
-- **Status:** Open
+- **Status:** Fixed – 2026-03-29
 
 ## Steps to Reproduce
 
@@ -48,3 +48,7 @@ const [isOpen, setIsOpen] = useState(initiallyOpen);
 ## Priority
 
 Fix before release
+
+## Fix
+
+`ShareSection.tsx`: Ersetze den mount-only UX-022 Effect durch einen `useEffect([initiallyOpen])`-Effect der auf Prop-Änderungen reagiert. Wenn `initiallyOpen` zu `true` wird (auch asynchron nach erstem STATE_UPDATE), wird `setIsOpen(true)` aufgerufen. Der bestehende `[isOpen]`-Effect setzt danach korrekt den Fokus auf den ersten Button.
