@@ -358,7 +358,7 @@ Optional für Sound:
 ---
 
 ## 5. QA Ergebnisse
-*Ausgefüllt von: /qa-engineer — 2026-03-29 (Re-QA Runde 5)*
+*Ausgefüllt von: /qa-engineer — 2026-03-29 (Re-QA Runde 6)*
 
 ### Acceptance Criteria Status
 - [x] Fünf Preset-Buttons ✅
@@ -388,10 +388,11 @@ Optional für Sound:
 - aria-controls bewusst entfernt, aria-expanded ausreichend ✅
 - Focus-Management beim Öffnen der ShareSection ✅
 - Focus-Return beim Schließen der ShareSection ✅ (UX-010 gefixt)
-- prefers-reduced-motion: ConnectionIndicator inline @media fix ✅ (UX-023 gefixt)
-- Moderatoren-URL Warning-Box: role="region" + aria-label gesetzt ✅ (UX-021 gefixt)
-- Auto-Open Fokus bei initiallyOpen=true: Fix implementiert, aber wirkungslos → QA-016
-- aria-live="assertive" für Pause-State zu aggressiv → UX-025
+- presets-reduced-motion: ConnectionIndicator inline @media fix ✅ (UX-023 gefixt)
+- Moderatoren-URL Warning-Box: role="region" + aria-label + aria-describedby ✅ (UX-021, UX-024 gefixt)
+- aria-live assertive/polite korrekt getrennt nach Kritikalität ✅ (UX-025 gefixt)
+- ShareSection Auto-Open: öffnet sich korrekt nach async STATE_UPDATE ✅ (QA-016 gefixt)
+- Focus-Call im [initiallyOpen]-Effect feuert auf noch-verborgenem Element → UX-027 / QA-017
 
 ### Behobene Bugs (alle Runden)
 - ~~BUG-FEAT2-QA-001~~ – Sound-Trigger Race Condition (High) → **Fixed** ✅
@@ -406,6 +407,7 @@ Optional für Sound:
 - ~~BUG-FEAT2-QA-012~~ – "Warten auf nächsten Timer…" bei konfigurierter Dauer (Medium) → **Fixed** ✅
 - ~~BUG-FEAT2-QA-013~~ – START aus expired → remainingMs=0 im STATE_UPDATE (High) → **Fixed** ✅
 - ~~BUG-FEAT2-QA-014~~ – isWarning-Flash beim expired→running (Medium) → **Fixed** ✅
+- ~~BUG-FEAT2-QA-016~~ – ShareSection Auto-Open grundsätzlich defekt (useState async) (Medium) → **Fixed** ✅
 - ~~BUG-FEAT2-UX-001~~ – Paused-Zustand visuell = Running (High) → **Fixed** ✅
 - ~~BUG-FEAT2-UX-002~~ – aria-live auf tickendem Timer (High) → **Fixed** ✅
 - ~~BUG-FEAT2-UX-003~~ – Beide Felder als aria-invalid (Medium) → **Fixed** ✅
@@ -422,25 +424,27 @@ Optional für Sound:
 - ~~BUG-FEAT2-UX-018~~ – Moderatoren-URL ohne visuelle Warnung (High) → **Fixed** ✅
 - ~~BUG-FEAT2-UX-019~~ – prefers-reduced-motion ignoriert (Medium) → **Fixed** ✅
 - ~~BUG-FEAT2-UX-021~~ – Moderatoren-URL Warning-Box kein ARIA-Landmark (Medium) → **Fixed** ✅
-- ~~BUG-FEAT2-UX-022~~ – ShareSection Auto-Open kein initialer Fokus (Medium) → **Fixed** ✅ (wirkungslos bis QA-016 gefixt)
+- ~~BUG-FEAT2-UX-022~~ – ShareSection Auto-Open kein initialer Fokus (Medium) → **Fixed** ✅
 - ~~BUG-FEAT2-UX-023~~ – ConnectionIndicator prefers-reduced-motion ignoriert (Medium) → **Fixed** ✅
+- ~~BUG-FEAT2-UX-024~~ – CopyButton Moderatoren-Link fehlt aria-describedby (Medium) → **Fixed** ✅
+- ~~BUG-FEAT2-UX-025~~ – aria-live="assertive" für Pause zu aggressiv (Medium) → **Fixed** ✅
+- ~~BUG-FEAT2-UX-026~~ – Inkonsistente Disabled-Darstellung (Low) → **Fixed** ✅
 
-### Offene Bugs (Re-QA Runde 5)
-- BUG-FEAT2-QA-016 – ShareSection Auto-Open funktioniert grundsätzlich nicht (useState reagiert nicht auf async initiallyOpen-Prop) (Medium)
-- BUG-FEAT2-UX-024 – CopyButton Moderatoren-Link fehlt aria-describedby zum Warnungstext (Medium)
-- BUG-FEAT2-UX-025 – aria-live="assertive" für Pause-Announcement zu aggressiv (Medium)
+### Offene Bugs (Re-QA Runde 6)
+- BUG-FEAT2-UX-027 – ShareSection Auto-Open: btn?.focus() auf noch-verborgenem Element (Medium) ← auch QA-017
 - BUG-FEAT2-QA-015 – displayRemainingMs zeigt 00:00 für einen Frame nach State-Transition (Low)
+- BUG-FEAT2-QA-017 – Doppelter Focus-Call beim Auto-Open (selbe Ursache wie UX-027) (Low)
 - BUG-FEAT2-UX-014 – Kein "Timer pausiert"-Text für Teilnehmer im paused-Zustand (Low)
 - BUG-FEAT2-UX-015 – Keine Hover-Zustände auf Preset-Buttons (Low)
 - BUG-FEAT2-UX-016 – ShareSection doppelte hidden-Logik + verwaiste id (Low)
 - BUG-FEAT2-UX-017 – URL-Text in ShareSection bei 13px grenzwertig lesbar (Low)
 - BUG-FEAT2-UX-020 – Kein Feedback nach "Übernehmen"-Klick (Low)
-- BUG-FEAT2-UX-026 – Inkonsistente Disabled-Darstellung in TimerControls (Low)
+- BUG-FEAT2-UX-028 – "--:--" ohne visuellen Ladehinweis für sehende Nutzer (Low)
 
 ### Summary
 - ✅ 12/12 Acceptance Criteria passed
-- ✅ 30 Bugs aus Runden 1–5 gefixt
-- ❌ 10 offene Bugs (0 Critical, 0 High, 3 Medium, 7 Low)
+- ✅ 34 Bugs aus Runden 1–6 gefixt
+- ❌ 9 offene Bugs (0 Critical, 0 High, 1 Medium, 8 Low)
 
 ### Production-Ready
-❌ NOT Ready – 3 offene Medium-Bugs (QA-016, UX-024, UX-025)
+❌ NOT Ready – 1 offener Medium-Bug (UX-027 / QA-017: Focus-Timing beim ShareSection Auto-Open)
